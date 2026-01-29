@@ -5,6 +5,8 @@ const swaggerDocs = require('./src/config/swagger');
 const { verifyToken, generateToken } = require('./src/middleware/auth');
 const { sequelize, testConnection } = require('./src/config/database');
 const usuariosRoutes = require('./src/routes/usuarios');
+const rabbitmqRoutes = require('./src/routes/rabbitmq');
+const { startUserConsumer } = require('./src/consumers/userConsumer');
 
 const app = express();
 const PORT = process.env.PORT || 3003;
@@ -22,6 +24,9 @@ app.use(express.json());
 // Swagger Documentation
 swaggerDocs(app, PORT);
 
+
+// Rutas de RabbitMQ
+app.use('/api/rabbitmq', rabbitmqRoutes);
 // Rutas de usuarios
 app.use('/api/usuarios', usuariosRoutes);
 
@@ -155,10 +160,15 @@ const iniciarServidor = async () => {
     await sequelize.sync({ alter: true });
     console.log('✅ Modelos sincronizados con la base de datos');
 
+    // Iniciar consumer de RabbitMQ
+    await startUserConsumer();
+    console.log('✅ Consumer de RabbitMQ iniciado');
+
     // Iniciar servidor
     app.listen(PORT, () => {
       console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`);
       console.log(`📚 Swagger disponible en http://localhost:${PORT}/api-docs`);
+      console.log(`🐰 RabbitMQ consumer escuchando mensajes`);
     });
   } catch (error) {
     console.error('❌ Error al iniciar el servidor:', error);
