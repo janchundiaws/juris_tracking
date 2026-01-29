@@ -3,7 +3,7 @@ const router = express.Router();
 const Usuario = require('../models/Usuario');
 const { generateToken } = require('../middleware/auth');
 const { verifyToken } = require('../middleware/auth');
-const { publishNewUserEvent } = require('../config/rabbitmq');
+const { publishNewUserEvent, publishUserUpdatedEvent } = require('../config/rabbitmq');
 
 /**
  * @swagger
@@ -249,6 +249,14 @@ router.put('/:id', verifyToken, async (req, res) => {
     }
 
     await usuario.update(req.body);
+
+    await publishUserUpdatedEvent({
+      id: usuario.id,
+      nombre: usuario.nombre,
+      email: usuario.email,
+      rol: usuario.rol
+    });
+
     res.json({
       message: 'Usuario actualizado',
       usuario: {
