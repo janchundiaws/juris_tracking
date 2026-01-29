@@ -4,7 +4,12 @@ const cors = require('cors');
 const swaggerDocs = require('./src/config/swagger');
 const { verifyToken, generateToken } = require('./src/middleware/auth');
 const { sequelize, testConnection } = require('./src/config/database');
-const usuariosRoutes = require('./src/routes/usuarios');
+const usuariosRoutes = require('./src/routes/users');
+const citiesRoutes = require('./src/routes/cities');
+const maestroRoutes = require('./src/routes/maestro');
+const lawyersRoutes = require('./src/routes/lawyers');
+const creditorsRoutes = require('./src/routes/creditors');
+const judicialProcessesRoutes = require('./src/routes/judicial-processes');
 const rabbitmqRoutes = require('./src/routes/rabbitmq');
 const { startUserConsumer } = require('./src/consumers/userConsumer');
 
@@ -29,121 +34,16 @@ swaggerDocs(app, PORT);
 app.use('/api/rabbitmq', rabbitmqRoutes);
 // Rutas de usuarios
 app.use('/api/usuarios', usuariosRoutes);
-
-/**
- * @swagger
- * /api/login:
- *   post:
- *     summary: Login de usuario
- *     tags:
- *       - Autenticación
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *                 example: user@example.com
- *               password:
- *                 type: string
- *                 example: password123
- *     responses:
- *       200:
- *         description: Login exitoso, retorna el token
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 token:
- *                   type: string
- *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
- *       401:
- *         description: Credenciales inválidas
- */
-app.post('/api/login', (req, res) => {
-  const { email, password } = req.body;
-
-  // Validación básica (en producción, validar contra base de datos)
-  if (!email || !password) {
-    return res.status(400).json({ error: 'Email y password requeridos' });
-  }
-
-  // Simular validación de usuario
-  if (email === 'test@example.com' && password === 'password123') {
-    const token = generateToken({
-      id: 1,
-      email: email,
-      role: 'admin'
-    });
-
-    return res.json({
-      message: 'Login exitoso',
-      token: token
-    });
-  }
-
-  res.status(401).json({ error: 'Credenciales inválidas' });
-});
-
-/**
- * @swagger
- * /api/protected:
- *   get:
- *     summary: Ruta protegida - requiere autenticación
- *     tags:
- *       - Datos Protegidos
- *     security:
- *       - BearerAuth: []
- *     responses:
- *       200:
- *         description: Datos protegidos obtenidos exitosamente
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 user:
- *                   type: object
- *       401:
- *         description: Token no proporcionado
- *       403:
- *         description: Token inválido o expirado
- */
-app.get('/api/protected', verifyToken, (req, res) => {
-  res.json({
-    message: 'Acceso autorizado',
-    user: req.user
-  });
-});
-
-/**
- * @swagger
- * /api/health:
- *   get:
- *     summary: Estado del servidor
- *     tags:
- *       - Health Check
- *     responses:
- *       200:
- *         description: Servidor operativo
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: ok
- */
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' });
-});
+// Rutas de ciudades
+app.use('/api/cities', citiesRoutes);
+// Rutas de maestro
+app.use('/api/maestro', maestroRoutes);
+// Rutas de abogados
+app.use('/api/lawyers', lawyersRoutes);
+// Rutas de acreedores
+app.use('/api/creditors', creditorsRoutes);
+// Rutas de procesos judiciales
+app.use('/api/judicial-processes', judicialProcessesRoutes);
 
 // Manejo de errores 404
 app.use((req, res) => {

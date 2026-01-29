@@ -133,8 +133,6 @@ class _HomeScreenState extends State<HomeScreen> {
           _buildMensajesRabbitMQ(),
           const SizedBox(height: 24),
 
-          // Próximas Audiencias
-          _buildUpcomingHearings(),
         ],
       ),
     );
@@ -189,14 +187,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildStatsGrid(bool isSmallScreen, bool isMediumScreen) {
-    final crossAxisCount = isSmallScreen ? 2 : (isMediumScreen ? 3 : 4);
+    final crossAxisCount = isSmallScreen ? 2 : (isMediumScreen ? 3 : 8);
 
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: crossAxisCount,
-      crossAxisSpacing: 16,
-      mainAxisSpacing: 16,
+      crossAxisSpacing: 5,
+      mainAxisSpacing: 5,
       children: [
         _buildStatCard(
           'Casos Activos',
@@ -289,45 +287,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 subtitle: Text('Demanda civil - En proceso'),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {},
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildUpcomingHearings() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Próximas Audiencias',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-        const SizedBox(height: 16),
-        Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: 3,
-            separatorBuilder: (_, __) => const Divider(),
-            itemBuilder: (context, index) {
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Colors.orange.shade100,
-                  child: Icon(Icons.event, color: Colors.orange.shade700),
-                ),
-                title: Text('Audiencia Caso #${1000 + index}'),
-                subtitle: Text('${15 + index} de febrero, 2026 - 10:00 AM'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.alarm),
-                  onPressed: () {},
-                ),
               );
             },
           ),

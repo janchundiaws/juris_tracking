@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Usuario = require('../models/Usuario');
+const User = require('../models/User');
 const { generateToken } = require('../middleware/auth');
 const { verifyToken } = require('../middleware/auth');
 const { publishNewUserEvent, publishUserUpdatedEvent } = require('../config/rabbitmq');
@@ -19,15 +19,30 @@ const { publishNewUserEvent, publishUserUpdatedEvent } = require('../config/rabb
  *           schema:
  *             type: object
  *             properties:
- *               nombre:
- *                 type: string
- *               email:
+ *               username:
  *                 type: string
  *               password:
  *                 type: string
- *               rol:
+ *               first_name:
  *                 type: string
- *                 enum: [admin, usuario, abogado]
+ *               last_name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               role_id:
+ *                 type: integer
+ *               status:
+ *                 type: string
+ *                 enum: [activo, inactivo, suspendido]
+ *             required:
+ *               - username
+ *               - password
+ *               - first_name
+ *               - last_name
+ *               - email
+ *               - role_id
+ *               - status
  *     responses:
  *       201:
  *         description: Usuario registrado exitosamente
@@ -36,45 +51,62 @@ const { publishNewUserEvent, publishUserUpdatedEvent } = require('../config/rabb
  */
 router.post('/registro', async (req, res) => {
   try {
-    const { nombre, email, password, rol } = req.body;
+    const { username, password, first_name, last_name, email, role_id, status } = req.body;
 
-    if (!nombre || !email || !password) {
-      return res.status(400).json({ error: 'Nombre, email y password son requeridos' });
+    if (!username || !password || !first_name || !last_name || !email || !role_id || !status) {
+      return res.status(400).json({ error: 'Todos los campos son requeridos' });
     }
 
-    const usuarioExistente = await Usuario.findOne({ where: { email } });
+    const { Op } = require("sequelize");
+    const usuarioExistente = await User.findOne({ 
+    where: {
+        [Op.or]: [
+            { email: email },
+            { username: username }
+            ]
+        }
+    });
     if (usuarioExistente) {
-      return res.status(400).json({ error: 'El email ya está registrado' });
+      return res.status(400).json({ error: 'El email o el nombre de usuario ya están registrados' });
     }
 
-    const usuario = await Usuario.create({
-      nombre,
-      email,
+    const usuario = await User.create({
+      username,
       password,
-      rol: rol || 'usuario'
+      first_name,
+      last_name,
+      email,
+      role_id,
+      status
     });
 
     const token = generateToken({
       id: usuario.id,
       email: usuario.email,
-      rol: usuario.rol
+      role_id: usuario.role_id
     });
 
     // Publicar mensaje en RabbitMQ
     await publishNewUserEvent({
       id: usuario.id,
-      nombre: usuario.nombre,
+      username: usuario.username,
+      first_name: usuario.first_name,
+      last_name: usuario.last_name,
       email: usuario.email,
-      rol: usuario.rol
+      role_id: usuario.role_id,
+      status: usuario.status
     });
 
     res.status(201).json({
       message: 'Usuario registrado exitosamente',
       usuario: {
         id: usuario.id,
-        nombre: usuario.nombre,
+        username: usuario.username,
+        first_name: usuario.first_name,
+        last_name: usuario.last_name,
         email: usuario.email,
-        rol: usuario.rol
+        role_id: usuario.role_id,
+        status: usuario.status
       },
       token
     });
@@ -115,7 +147,7 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Email y password requeridos' });
     }
 
-    const usuario = await Usuario.findOne({ where: { email } });
+    const usuario = await User.findOne({ where: { email } });
     if (!usuario) {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
@@ -128,16 +160,19 @@ router.post('/login', async (req, res) => {
     const token = generateToken({
       id: usuario.id,
       email: usuario.email,
-      rol: usuario.rol
+      role_id: usuario.role_id
     });
 
     res.json({
       message: 'Login exitoso',
       usuario: {
         id: usuario.id,
-        nombre: usuario.nombre,
+        username: usuario.username,
+        first_name: usuario.first_name,
+        last_name: usuario.last_name,
         email: usuario.email,
-        rol: usuario.rol
+        role_id: usuario.role_id,
+        status: usuario.status
       },
       token
     });
@@ -163,7 +198,7 @@ router.post('/login', async (req, res) => {
  */
 router.get('/', verifyToken, async (req, res) => {
   try {
-    const usuarios = await Usuario.findAll({
+    const usuarios = await User.findAll({
       attributes: { exclude: ['password'] }
     });
     res.json(usuarios);
@@ -195,7 +230,7 @@ router.get('/', verifyToken, async (req, res) => {
  */
 router.get('/:id', verifyToken, async (req, res) => {
   try {
-    const usuario = await Usuario.findByPk(req.params.id, {
+    const usuario = await User.findByPk(req.params.id, {
       attributes: { exclude: ['password'] }
     });
 
@@ -230,10 +265,20 @@ router.get('/:id', verifyToken, async (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               nombre:
+ *               username:
+ *                 type: string
+ *               first_name:
+ *                 type: string
+ *               last_name:
  *                 type: string
  *               email:
  *                 type: string
+ *                 format: email
+ *               role_id:
+ *                 type: integer
+ *               status:
+ *                 type: string
+ *                 enum: [activo, inactivo, suspendido]
  *     responses:
  *       200:
  *         description: Usuario actualizado
@@ -242,7 +287,7 @@ router.get('/:id', verifyToken, async (req, res) => {
  */
 router.put('/:id', verifyToken, async (req, res) => {
   try {
-    const usuario = await Usuario.findByPk(req.params.id);
+    const usuario = await User.findByPk(req.params.id);
 
     if (!usuario) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
@@ -252,18 +297,24 @@ router.put('/:id', verifyToken, async (req, res) => {
 
     await publishUserUpdatedEvent({
       id: usuario.id,
-      nombre: usuario.nombre,
+      username: usuario.username,
+      first_name: usuario.first_name,
+      last_name: usuario.last_name,
       email: usuario.email,
-      rol: usuario.rol
+      role_id: usuario.role_id,
+      status: usuario.status
     });
 
     res.json({
       message: 'Usuario actualizado',
       usuario: {
         id: usuario.id,
-        nombre: usuario.nombre,
+        username: usuario.username,
+        first_name: usuario.first_name,
+        last_name: usuario.last_name,
         email: usuario.email,
-        rol: usuario.rol
+        role_id: usuario.role_id,
+        status: usuario.status
       }
     });
   } catch (error) {
@@ -294,7 +345,7 @@ router.put('/:id', verifyToken, async (req, res) => {
  */
 router.delete('/:id', verifyToken, async (req, res) => {
   try {
-    const usuario = await Usuario.findByPk(req.params.id);
+    const usuario = await User.findByPk(req.params.id);
 
     if (!usuario) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
