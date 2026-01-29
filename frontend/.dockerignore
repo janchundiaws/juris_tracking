@@ -1,0 +1,20 @@
+# .dockerignore para frontend
+build/
+.dart_tool/
+.packages
+pubspec.lock
+.git
+.gitignore
+.env
+.env.local
+.idea
+.vscode
+*.swp
+*.swo
+*~
+.DS_Store
+ios/
+android/
+windows/
+linux/
+macos/
