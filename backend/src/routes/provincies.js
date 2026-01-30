@@ -1,27 +1,27 @@
 const express = require('express');
 const router = express.Router();
-const City = require('../models/Citie');
+const Provincie = require('../models/Provincie');
 const { verifyToken } = require('../middleware/auth');
 
 /**
  * @swagger
- * /api/cities:
+ * /api/provincies:
  *   get:
- *     summary: Obtener todas las ciudades
+ *     summary: Obtener todas las provincies
  *     tags:
- *       - Ciudades
+ *       - Provincies
  *     responses:
  *       200:
- *         description: Lista de ciudades
+ *         description: Lista de provincies
  *       500:
  *         description: Error del servidor
  */
 router.get('/', async (req, res) => {
   try {
-    const cities = await City.findAll({
+    const provincies = await Provincie.findAll({
       order: [['name', 'ASC']]
     });
-    res.json(cities);
+    res.json(provincies);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -29,11 +29,11 @@ router.get('/', async (req, res) => {
 
 /**
  * @swagger
- * /api/cities/{id}:
+ * /api/provincies/{id}:
  *   get:
- *     summary: Obtener una ciudad por ID
+ *     summary: Obtener una provincie por ID
  *     tags:
- *       - Ciudades
+ *       - Provincies
  *     parameters:
  *       - in: path
  *         name: id
@@ -42,19 +42,18 @@ router.get('/', async (req, res) => {
  *           type: string
  *     responses:
  *       200:
- *         description: Datos de la ciudad
+ *         description: Datos de la provincia
  *       404:
- *         description: Ciudad no encontrada
+ *         description: Provincia no encontrada
  */
 router.get('/:id', async (req, res) => {
   try {
-    const city = await City.findByPk(req.params.id);
-
-    if (!city) {
-      return res.status(404).json({ error: 'Ciudad no encontrada' });
+    const provincie = await Provincie.findByPk(req.params.id);
+    if (!provincie) {
+      return res.status(404).json({ error: 'Provincia no encontrada' });
     }
 
-    res.json(city);
+    res.json(provincie);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -62,11 +61,11 @@ router.get('/:id', async (req, res) => {
 
 /**
  * @swagger
- * /api/cities:
+ * /api/provincies:
  *   post:
- *     summary: Crear una nueva ciudad
+ *     summary: Crear una nueva provincia
  *     tags:
- *       - Ciudades
+ *       - Provincias
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -84,7 +83,7 @@ router.get('/:id', async (req, res) => {
  *               - name
  *     responses:
  *       201:
- *         description: Ciudad creada exitosamente
+ *         description: Provincia creada exitosamente
  *       400:
  *         description: Error en los datos proporcionados
  */
@@ -93,22 +92,22 @@ router.post('/', verifyToken, async (req, res) => {
     const { name, postal_code } = req.body;
 
     if (!name) {
-      return res.status(400).json({ error: 'El nombre de la ciudad es requerido' });
+      return res.status(400).json({ error: 'El nombre de la provincia es requerido' });
     }
 
-    const cityExisting = await City.findOne({ where: { name } });
-    if (cityExisting) {
-      return res.status(400).json({ error: 'La ciudad ya existe' });
+    const provinceExisting = await Provincie.findOne({ where: { name } });
+    if (provinceExisting) {
+      return res.status(400).json({ error: 'La provincia ya existe' });
     }
 
-    const city = await City.create({
+    const provincie = await Provincie.create({
       name,
       postal_code: postal_code || null
     });
 
     res.status(201).json({
-      message: 'Ciudad creada exitosamente',
-      city
+      message: 'Provincia creada exitosamente',
+      provincie
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -117,11 +116,11 @@ router.post('/', verifyToken, async (req, res) => {
 
 /**
  * @swagger
- * /api/cities/{id}:
+ * /api/provincies/{id}:
  *   put:
- *     summary: Actualizar una ciudad
+ *     summary: Actualizar una provincia
  *     tags:
- *       - Ciudades
+ *       - Provincias
  *     security:
  *       - BearerAuth: []
  *     parameters:
@@ -143,23 +142,22 @@ router.post('/', verifyToken, async (req, res) => {
  *                 type: string
  *     responses:
  *       200:
- *         description: Ciudad actualizada
+ *         description: Provincia actualizada
  *       404:
- *         description: Ciudad no encontrada
+ *         description: Provincia no encontrada
  */
 router.put('/:id', verifyToken, async (req, res) => {
   try {
-    const city = await City.findByPk(req.params.id);
-
-    if (!city) {
-      return res.status(404).json({ error: 'Ciudad no encontrada' });
+    const provincie = await Provincie.findByPk(req.params.id);
+    if (!provincie) {
+      return res.status(404).json({ error: 'Provincia no encontrada' });
     }
 
-    await city.update(req.body);
+    await provincie.update(req.body);
 
     res.json({
-      message: 'Ciudad actualizada',
-      city
+      message: 'Provincia actualizada',
+      provincie
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -168,11 +166,11 @@ router.put('/:id', verifyToken, async (req, res) => {
 
 /**
  * @swagger
- * /api/cities/{id}:
+ * /api/provincies/{id}:
  *   delete:
- *     summary: Eliminar una ciudad
+ *     summary: Eliminar una provincia
  *     tags:
- *       - Ciudades
+ *       - Provincias
  *     security:
  *       - BearerAuth: []
  *     parameters:
@@ -183,20 +181,19 @@ router.put('/:id', verifyToken, async (req, res) => {
  *           type: string
  *     responses:
  *       200:
- *         description: Ciudad eliminada
+ *         description: Provincia eliminada
  *       404:
- *         description: Ciudad no encontrada
+ *         description: Provincia no encontrada
  */
 router.delete('/:id', verifyToken, async (req, res) => {
   try {
-    const city = await City.findByPk(req.params.id);
-
-    if (!city) {
-      return res.status(404).json({ error: 'Ciudad no encontrada' });
+    const provincie = await Provincie.findByPk(req.params.id);
+    if (!provincie) {
+      return res.status(404).json({ error: 'Provincia no encontrada' });
     }
 
-    await city.destroy();
-    res.json({ message: 'Ciudad eliminada' });
+    await provincie.destroy();
+    res.json({ message: 'Provincia eliminada' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

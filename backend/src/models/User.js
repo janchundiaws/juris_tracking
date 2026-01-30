@@ -47,8 +47,14 @@ const User = sequelize.define('User', {
     }
   },
   role_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false
+    type: DataTypes.UUID,
+    allowNull: true,
+    references: {
+      model: 'roles',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT'
   },
   status: {
     type: DataTypes.ENUM('activo', 'inactivo', 'suspendido'),

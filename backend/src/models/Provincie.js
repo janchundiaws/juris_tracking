@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 
-const City = sequelize.define('City', {
+const Provincie = sequelize.define('Provincie', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -26,10 +26,10 @@ const City = sequelize.define('City', {
     defaultValue: DataTypes.NOW
   }
 }, {
-  tableName: 'cities',
+  tableName: 'provincies',
   timestamps: false,
   createdAt: false,
   updatedAt: false
 });
 
-module.exports = City;
+module.exports = Provincie;

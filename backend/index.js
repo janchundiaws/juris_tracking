@@ -5,13 +5,15 @@ const swaggerDocs = require('./src/config/swagger');
 const { verifyToken, generateToken } = require('./src/middleware/auth');
 const { sequelize, testConnection } = require('./src/config/database');
 const usuariosRoutes = require('./src/routes/users');
-const citiesRoutes = require('./src/routes/cities');
+const provinciesRoutes = require('./src/routes/provincies');
 const maestroRoutes = require('./src/routes/maestro');
 const lawyersRoutes = require('./src/routes/lawyers');
 const creditorsRoutes = require('./src/routes/creditors');
 const judicialProcessesRoutes = require('./src/routes/judicial-processes');
 const rabbitmqRoutes = require('./src/routes/rabbitmq');
 const { startUserConsumer } = require('./src/consumers/userConsumer');
+const Provincie = require('./src/models/Provincie');
+const Role = require('./src/models/Role');
 
 const app = express();
 const PORT = process.env.PORT || 3003;
@@ -34,8 +36,8 @@ swaggerDocs(app, PORT);
 app.use('/api/rabbitmq', rabbitmqRoutes);
 // Rutas de usuarios
 app.use('/api/usuarios', usuariosRoutes);
-// Rutas de ciudades
-app.use('/api/cities', citiesRoutes);
+// Rutas de provincias
+app.use('/api/provincias', provinciesRoutes);
 // Rutas de maestro
 app.use('/api/maestro', maestroRoutes);
 // Rutas de abogados
@@ -50,6 +52,56 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Ruta no encontrada' });
 });
 
+// Función para insertar datos iniciales de provincias
+const insertDataInicial = async () => {
+  try {
+    const count = await Provincie.count();
+    if (count === 0) {
+      const defaultProvincies = [
+        { name: 'Manabi', postal_code: '13' },
+        { name: 'Pichincha', postal_code: '17' },
+        { name: 'Guayas', postal_code: '09' },
+        { name: 'Azuay', postal_code: '01' },
+        { name: 'El Oro', postal_code: '07' },
+        { name: 'Loja', postal_code: '11' },
+        { name: 'Tungurahua', postal_code: '18' },
+        { name: 'Cotopaxi', postal_code: '03' },
+        { name: 'Imbabura', postal_code: '10' },
+        { name: 'Carchi', postal_code: '02' },
+        { name: 'Chimborazo', postal_code: '06' },
+        { name: 'Bolivar', postal_code: '04' },
+        { name: 'Zamora-Chinchipe', postal_code: '20' },
+        { name: 'Sucumbios', postal_code: '22' },
+        { name: 'Orellana', postal_code: '15' },
+        { name: 'Napo', postal_code: '14' },
+        { name: 'Pastaza', postal_code: '16' },
+        { name: 'Santo Domingo de los Tsáchilas', postal_code: '24' },
+        { name: 'Santa Elena', postal_code: '26' },
+        { name: 'Galápagos', postal_code: '23' }
+
+      ];
+      
+      await Provincie.bulkCreate(defaultProvincies);
+      console.log('✅ Datos iniciales de provincias insertados');
+
+      const countRoles = await Role.count();
+      if (countRoles === 0) {
+        const defaultRoles = [
+          { name: 'admin' },
+          { name: 'abogado' },
+          {}
+        ];
+        
+        await Role.bulkCreate(defaultRoles);
+        console.log('✅ Datos iniciales de roles insertados');  
+    }
+
+    }
+  } catch (error) {
+    console.error('❌ Error al insertar datos iniciales de provincias:', error);
+  }
+};
+
 // Inicializar servidor y base de datos
 const iniciarServidor = async () => {
   try {
@@ -57,8 +109,11 @@ const iniciarServidor = async () => {
     await testConnection();
 
     // Sincronizar modelos con la base de datos
-    await sequelize.sync({ alter: true });
+    await sequelize.sync({ force: true });
     console.log('✅ Modelos sincronizados con la base de datos');
+
+    // Insertar datos iniciales
+    await insertDataInicial();
 
     // Iniciar consumer de RabbitMQ
     await startUserConsumer();

@@ -28,11 +28,11 @@ const JudicialProcess = sequelize.define('JudicialProcess', {
     onUpdate: 'CASCADE',
     onDelete: 'SET NULL'
   },
-  city_id: {
+  provincie_id: {
     type: DataTypes.UUID,
     allowNull: true,
     references: {
-      model: 'cities',
+      model: 'provincies',
       key: 'id'
     },
     onUpdate: 'CASCADE',

@@ -86,7 +86,7 @@ router.get('/:id', verifyToken, async (req, res) => {
  *               external_lawyer_id:
  *                 type: string
  *                 format: uuid
- *               city_id:
+ *               provincie_id:
  *                 type: string
  *                 format: uuid
  *               creditor_id:
@@ -190,7 +190,7 @@ router.post('/', verifyToken, async (req, res) => {
  *               external_lawyer_id:
  *                 type: string
  *                 format: uuid
- *               city_id:
+ *               provincie_id:
  *                 type: string
  *                 format: uuid
  *               creditor_id:

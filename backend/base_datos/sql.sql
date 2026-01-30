@@ -67,16 +67,16 @@ EXECUTE FUNCTION update_timestamp();
 
 
 -- ============================================
---  TABLA MAESTRA: CIUDADES
+--  TABLA MAESTRA: PROVINCIAS
 -- ============================================
-CREATE TABLE cities (
+CREATE TABLE provincies (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(150) NOT NULL,
     postal_code VARCHAR(20),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     UNIQUE(name)
 );
-CREATE INDEX idx_cities_name ON cities(name);
+CREATE INDEX idx_provincies_name ON provincies(name);
 
 -- ============================================
 --  TABLA MAESTRA GENÉRICA
@@ -213,7 +213,7 @@ CREATE TABLE judicial_processes (
     -- Foreign keys
     internal_lawyer_id UUID REFERENCES lawyers(id) ON UPDATE CASCADE ON DELETE SET NULL,
     external_lawyer_id UUID REFERENCES lawyers(id) ON UPDATE CASCADE ON DELETE SET NULL,
-    city_id UUID REFERENCES cities(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+    provincie_id UUID REFERENCES provincies(id) ON UPDATE CASCADE ON DELETE RESTRICT,
     creditor_id UUID REFERENCES creditors(id) ON UPDATE CASCADE ON DELETE RESTRICT,
     product UUID REFERENCES maestro(id) ON UPDATE CASCADE ON DELETE RESTRICT,  -- PRODUCTO
     guarantee UUID REFERENCES maestro(id) ON UPDATE CASCADE ON DELETE RESTRICT, -- GARANTÍA
