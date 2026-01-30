@@ -87,9 +87,9 @@ const insertDataInicial = async () => {
       const countRoles = await Role.count();
       if (countRoles === 0) {
         const defaultRoles = [
-          { name: 'admin' },
-          { name: 'abogado' },
-          {}
+          { name: 'admin' ,description: 'Administrador del sistema'},
+          { name: 'abogado', description: 'Usuario con rol de abogado' },
+          { name: 'asistente', description: 'Usuario con rol de asistente'}
         ];
         
         await Role.bulkCreate(defaultRoles);
