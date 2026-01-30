@@ -96,12 +96,30 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    setError(null);
-    localStorage.removeItem('usuario');
-    localStorage.removeItem('token');
-    delete axios.defaults.headers.common['Authorization'];
+  const logout = async () => {
+    try {
+      setError(null);
+      
+      // Llamar al endpoint de logout del servidor si es necesario
+      try {
+        await axios.post(`${API_URL}/usuarios/logout`);
+      } catch (err) {
+        // Si el logout falla en el servidor, continuamos con la limpieza local
+        console.warn('No se pudo notificar al servidor del logout:', err);
+      }
+      
+      // Limpiar el estado local
+      setUser(null);
+      localStorage.removeItem('usuario');
+      localStorage.removeItem('token');
+      delete axios.defaults.headers.common['Authorization'];
+      
+      return { success: true };
+    } catch (err) {
+      const errorMessage = 'Error al cerrar sesión';
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    }
   };
 
   const value = {

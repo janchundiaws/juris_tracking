@@ -5,6 +5,8 @@ import PrivateRoute from './components/PrivateRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import Profile from './pages/Profile';
+import Cases from './pages/Cases';
 import './App.css';
 
 function App() {
@@ -34,10 +36,16 @@ function App() {
             path="/cases"
             element={
               <PrivateRoute>
-                <div style={{ padding: '40px', textAlign: 'center' }}>
-                  <h1>Gestión de Casos</h1>
-                  <p>Módulo en desarrollo</p>
-                </div>
+                <Cases />
+              </PrivateRoute>
+            }
+          />
+          
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <Profile />
               </PrivateRoute>
             }
           />

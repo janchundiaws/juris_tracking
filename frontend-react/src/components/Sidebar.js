@@ -1,21 +1,9 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Navigation from './Navigation';
 
 const Sidebar = () => {
-  const location = useLocation();
   const { user } = useAuth();
-
-  const menuItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: '🏠' },
-    { path: '/cases', label: 'Casos', icon: '⚖️' },
-    { path: '/clients', label: 'Clientes', icon: '👥' },
-    { path: '/calendar', label: 'Calendario', icon: '📅' },
-    { path: '/documents', label: 'Documentos', icon: '📄' },
-    { path: '/tasks', label: 'Tareas', icon: '✓' },
-    { path: '/reports', label: 'Reportes', icon: '📊' },
-    { path: '/settings', label: 'Configuración', icon: '⚙️' }
-  ];
 
   return (
     <aside className="sidebar">
@@ -31,27 +19,16 @@ const Sidebar = () => {
         <h2>JurisTracking</h2>
       </div>
 
-      <nav className="sidebar-nav">
-        {menuItems.map((item) => (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={`nav-item ${location.pathname === item.path ? 'active' : ''}`}
-          >
-            <span className="nav-icon">{item.icon}</span>
-            <span className="nav-label">{item.label}</span>
-          </Link>
-        ))}
-      </nav>
+      <Navigation />
 
       <div className="sidebar-footer">
         <div className="user-info">
           <div className="user-avatar">
-            {user?.firstName?.[0]}{user?.lastName?.[0]}
+            {user?.username?.[0]?.toUpperCase()}{user?.last_name?.[0]?.toUpperCase()}
           </div>
           <div className="user-details">
-            <p className="user-name">{user?.firstName} {user?.lastName}</p>
-            <p className="user-role">{user?.role}</p>
+            <p className="user-name">{user?.first_name} {user?.last_name}</p>
+            <p className="user-role">{user?.role_id}</p>
           </div>
         </div>
       </div>

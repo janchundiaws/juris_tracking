@@ -8,6 +8,7 @@ import '../styles/Dashboard.css';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [stats, setStats] = useState({
     totalCases: 0,
     activeCases: 0,
@@ -62,12 +63,12 @@ const Dashboard = () => {
       <Sidebar />
       
       <div className="main-content">
-        <Header title="Dashboard" userName={user?.firstName} />
+        <Header title="Dashboard" userName={user?.first_name} onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
         
         <div className="dashboard-content">
           <div className="welcome-section">
-            <h2>Bienvenido, {user?.firstName} {user?.lastName}</h2>
-            <p className="role-badge">{user?.role}</p>
+            <h2>Bienvenido, {user?.first_name} {user?.last_name}</h2>
+            <p className="role-badge">{user?.role_id}</p>
           </div>
 
           <div className="stats-grid">
