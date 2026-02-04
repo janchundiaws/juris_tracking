@@ -1,0 +1,439 @@
+/* Maestro.css - Estilos para la página de gestión de maestros */
+
+.maestro-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px;
+}
+
+/* Header y Botones */
+.maestro-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+
+/* Formulario de Maestros */
+.maestro-form-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-bottom: 32px;
+  overflow: hidden;
+}
+
+.form-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  background: #f7fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.form-card-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #1a1a1a;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #718096;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #1a1a1a;
+}
+
+.maestro-form {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #4a4a4a;
+  box-shadow: 0 0 0 3px rgba(74, 74, 74, 0.1);
+}
+
+.error-text {
+  font-size: 12px;
+  color: #f56565;
+  margin-top: 4px;
+}
+
+.error-message {
+  padding: 12px 16px;
+  background: #fff5f5;
+  border: 1px solid #fc8181;
+  border-radius: 8px;
+  color: #c53030;
+  font-size: 14px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.btn-primary {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary {
+  padding: 12px 24px;
+  background: #f7fafc;
+  color: #4a5568;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background: #edf2f7;
+  border-color: #cbd5e0;
+}
+
+/* Filtros */
+.maestro-filters {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 200px;
+  gap: 16px;
+  margin-bottom: 24px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  align-items: center;
+}
+
+@media (max-width: 1024px) {
+  .maestro-filters {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .maestro-filters {
+    grid-template-columns: 1fr;
+  }
+}
+
+.search-box {
+  position: relative;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px 42px 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s;
+  background: #f8fafc;
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: #4a4a4a;
+  box-shadow: 0 0 0 3px rgba(74, 74, 74, 0.1);
+  background: white;
+}
+
+.search-box input::placeholder {
+  color: #94a3b8;
+}
+
+.search-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.filter-group,
+.filter-status {
+  position: relative;
+}
+
+.filter-group select,
+.filter-status select {
+  width: 100%;
+  padding: 12px 36px 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  background: #f8fafc;
+  transition: all 0.2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a5568' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.filter-group select:focus,
+.filter-status select:focus {
+  outline: none;
+  border-color: #4a4a4a;
+  box-shadow: 0 0 0 3px rgba(74, 74, 74, 0.1);
+  background-color: white;
+}
+
+.filter-group select:hover,
+.filter-status select:hover {
+  border-color: #cbd5e0;
+}
+
+.maestro-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.maestro-actions .btn-primary {
+  white-space: nowrap;
+  height: fit-content;
+}
+
+@media (max-width: 1024px) {
+  .maestro-actions {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 640px) {
+  .maestro-actions {
+    grid-column: span 1;
+  }
+}
+
+/* Lista de Maestros */
+.maestro-list {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.empty-state {
+  padding: 60px 20px;
+  text-align: center;
+  color: #718096;
+}
+
+.maestro-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.maestro-table th {
+  text-align: left;
+  padding: 12px;
+  background: #f7fafc;
+  color: #4a5568;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.maestro-table td {
+  padding: 16px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 14px;
+  color: #2d3748;
+}
+
+.maestro-table tbody tr:hover {
+  background: #f7fafc;
+}
+
+.maestro-value {
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.code-badge {
+  padding: 4px 12px;
+  background: #edf2f7;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-activo {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-inactivo {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.date-cell {
+  font-size: 12px;
+  color: #718096;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.btn-icon:hover {
+  background: #f7fafc;
+}
+
+.btn-icon.btn-delete:hover {
+  background: #fee2e2;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .maestro-container {
+    padding: 16px;
+  }
+
+  .maestro-filters {
+    flex-direction: column;
+  }
+
+  .search-box,
+  .filter-group,
+  .filter-status {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .maestro-container {
+    padding: 16px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .maestro-table {
+    font-size: 12px;
+  }
+
+  .maestro-table th,
+  .maestro-table td {
+    padding: 8px;
+  }
+
+  .date-cell {
+    display: none;
+  }
+
+  .maestro-table th:nth-child(4),
+  .maestro-table th:nth-child(5) {
+    display: none;
+  }
+
+  .maestro-table td:nth-child(4),
+  .maestro-table td:nth-child(5) {
+    display: none;
+  }
+
+  .action-buttons {
+    flex-wrap: wrap;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+
+  .maestro-filters {
+    flex-direction: column;
+  }
+
+  .search-box,
+  .filter-group,
+  .filter-status {
+    width: 100%;
+    min-width: unset;
+  }
+}
