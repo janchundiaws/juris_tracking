@@ -363,4 +363,37 @@ export const usersService = {
   },
 };
 
+// Servicio de actividades
+export const activitiesService = {
+  getAll: async (filters = {}) => {
+    const response = await apiClient.get('/activities', { params: filters });
+    return response.data;
+  },
+
+  getByProcessId: async (judicialProcessId) => {
+    const response = await apiClient.get(`/activities/process/${judicialProcessId}`);
+    return response.data;
+  },
+
+  getById: async (id) => {
+    const response = await apiClient.get(`/activities/${id}`);
+    return response.data;
+  },
+
+  create: async (activityData) => {
+    const response = await apiClient.post('/activities', activityData);
+    return response.data;
+  },
+
+  update: async (id, activityData) => {
+    const response = await apiClient.put(`/activities/${id}`, activityData);
+    return response.data;
+  },
+
+  delete: async (id) => {
+    const response = await apiClient.delete(`/activities/${id}`);
+    return response.data;
+  },
+};
+
 export default apiClient;

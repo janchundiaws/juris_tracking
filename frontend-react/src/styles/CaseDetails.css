@@ -1071,3 +1071,214 @@
     height: 20px;
   }
 }
+
+/* Estilos para Actividades */
+.activities-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.activity-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.activity-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.activity-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.activity-type {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.activity-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.priority-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  text-transform: capitalize;
+}
+
+.btn-edit-activity,
+.btn-delete-activity {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  opacity: 0.6;
+  transition: all 0.2s;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.btn-edit-activity:hover {
+  opacity: 1;
+  background: #dbeafe;
+}
+
+.btn-delete-activity:hover {
+  opacity: 1;
+  background: #fee2e2;
+}
+
+.activity-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.activity-date,
+.activity-assignee {
+  font-size: 14px;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.activity-date strong,
+.activity-assignee strong {
+  color: #374151;
+  min-width: 120px;
+}
+
+.activity-date.completed {
+  color: #10b981;
+}
+
+.activity-notes {
+  margin-top: 8px;
+}
+
+.activity-notes strong {
+  display: block;
+  color: #374151;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.activity-notes p {
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0;
+  padding: 10px;
+  background: #f9fafb;
+  border-radius: 6px;
+  border-left: 3px solid #3b82f6;
+}
+
+/* Modal de Actividad */
+.activity-modal {
+  max-width: 700px !important;
+}
+
+.activity-modal .form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.activity-modal .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.activity-modal .form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.activity-modal .form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.activity-modal .form-group input,
+.activity-modal .form-group select,
+.activity-modal .form-group textarea {
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.activity-modal .form-group input:focus,
+.activity-modal .form-group select:focus,
+.activity-modal .form-group textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.activity-modal .form-group input:disabled,
+.activity-modal .form-group select:disabled,
+.activity-modal .form-group textarea:disabled {
+  background: #f9fafb;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.activity-modal .form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Modal de eliminación de actividad */
+.delete-modal .delete-details {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 12px 0;
+  border-left: 3px solid #f59e0b;
+}
+
+.delete-modal .delete-details p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #374151;
+}
+
+.delete-modal .delete-details strong {
+  color: #1f2937;
+  margin-right: 8px;
+}
+
+/* Responsive para actividades */
+@media (max-width: 768px) {
+  .activities-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .activity-modal .form-grid {
+    grid-template-columns: 1fr;
+  }
+}

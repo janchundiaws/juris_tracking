@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import { useAuth } from '../context/AuthContext';
-import { casesService, lawyersService, creditorsService, provinciesService, maestroService, documentsService } from '../services/api';
+import { casesService, lawyersService, creditorsService, provinciesService, maestroService, documentsService, activitiesService } from '../services/api';
 import '../styles/Dashboard.css';
 import '../styles/CaseDetails.css';
 
@@ -25,6 +25,21 @@ const CaseDetails = () => {
   const [uploadingFile, setUploadingFile] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [documentToDelete, setDocumentToDelete] = useState(null);
+  const [activities, setActivities] = useState([]);
+  const [loadingActivities, setLoadingActivities] = useState(false);
+  const [showActivityModal, setShowActivityModal] = useState(false);
+  const [editingActivity, setEditingActivity] = useState(null);
+  const [showDeleteActivityModal, setShowDeleteActivityModal] = useState(false);
+  const [activityToDelete, setActivityToDelete] = useState(null);
+  const [activityForm, setActivityForm] = useState({
+    activity_type: 'audiencia',
+    probable_activity_date: '',
+    completed_date: '',
+    priority: 'media',
+    assigned_to: '',
+    notes: ''
+  });
+  const [creatingActivity, setCreatingActivity] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('general');
@@ -37,6 +52,8 @@ const CaseDetails = () => {
   useEffect(() => {
     if (activeTab === 'documents' && id) {
       fetchDocuments();
+    } else if (activeTab === 'activities' && id) {
+      fetchActivities();
     }
   }, [activeTab, id]);
 
@@ -180,6 +197,146 @@ const CaseDetails = () => {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  };
+
+  const fetchActivities = async () => {
+    try {
+      setLoadingActivities(true);
+      const acts = await activitiesService.getByProcessId(id);
+      setActivities(acts || []);
+    } catch (err) {
+      console.error('Error al cargar actividades:', err);
+    } finally {
+      setLoadingActivities(false);
+    }
+  };
+
+  const handleActivityFormChange = (field, value) => {
+    setActivityForm(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleOpenActivityModal = () => {
+    setEditingActivity(null);
+    setActivityForm({
+      activity_type: 'audiencia',
+      probable_activity_date: '',
+      completed_date: '',
+      priority: 'media',
+      assigned_to: '',
+      notes: ''
+    });
+    setShowActivityModal(true);
+  };
+
+  const handleEditActivity = (activity) => {
+    setEditingActivity(activity);
+    setActivityForm({
+      activity_type: activity.activity_type,
+      probable_activity_date: activity.probable_activity_date ? activity.probable_activity_date.slice(0, 16) : '',
+      completed_date: activity.completed_date ? activity.completed_date.slice(0, 16) : '',
+      priority: activity.priority,
+      assigned_to: activity.assigned_to || '',
+      notes: activity.notes || ''
+    });
+    setShowActivityModal(true);
+  };
+
+  const handleSaveActivity = async () => {
+    try {
+      setCreatingActivity(true);
+      
+      const activityData = {
+        activity_type: activityForm.activity_type,
+        probable_activity_date: activityForm.probable_activity_date || null,
+        completed_date: activityForm.completed_date || null,
+        priority: activityForm.priority,
+        assigned_to: activityForm.assigned_to || null,
+        notes: activityForm.notes || ''
+      };
+
+      if (editingActivity) {
+        // Actualizar actividad existente
+        await activitiesService.update(editingActivity.id, activityData);
+      } else {
+        // Crear nueva actividad
+        activityData.judicial_process_id = id;
+        await activitiesService.create(activityData);
+      }
+      
+      // Resetear formulario
+      setActivityForm({
+        activity_type: 'audiencia',
+        probable_activity_date: '',
+        completed_date: '',
+        priority: 'media',
+        assigned_to: '',
+        notes: ''
+      });
+      setEditingActivity(null);
+      setShowActivityModal(false);
+      await fetchActivities();
+    } catch (err) {
+      console.error('Error al guardar actividad:', err);
+      alert(editingActivity ? 'Error al actualizar la actividad' : 'Error al crear la actividad');
+    } finally {
+      setCreatingActivity(false);
+    }
+  };
+
+  const handleDeleteActivity = (activity) => {
+    setActivityToDelete(activity);
+    setShowDeleteActivityModal(true);
+  };
+
+  const confirmDeleteActivity = async () => {
+    if (!activityToDelete) return;
+
+    try {
+      await activitiesService.delete(activityToDelete.id);
+      setShowDeleteActivityModal(false);
+      setActivityToDelete(null);
+      await fetchActivities();
+    } catch (err) {
+      console.error('Error al eliminar actividad:', err);
+      alert('Error al eliminar la actividad');
+    }
+  };
+
+  const formatDateTime = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleString('es-ES', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const getPriorityColor = (priority) => {
+    const colors = {
+      'baja': '#10b981',
+      'media': '#f59e0b',
+      'alta': '#ef4444',
+      'urgente': '#dc2626'
+    };
+    return colors[priority] || '#6b7280';
+  };
+
+  const getActivityTypeLabel = (type) => {
+    const labels = {
+      'audiencia': '⚖️ Audiencia',
+      'diligencia': '📋 Diligencia',
+      'presentacion': '📄 Presentación',
+      'notificacion': '🔔 Notificación',
+      'reunion': '👥 Reunión',
+      'otro': '📌 Otro'
+    };
+    return labels[type] || type;
   };
 
   const getLawyer = (id) => {
@@ -671,19 +828,88 @@ const CaseDetails = () => {
                 <div className="activities-section">
                   <div className="section-header">
                     <h3 className="section-title">Actividades</h3>
-                    <button className="btn-upload-doc">
+                    <button 
+                      className="btn-upload-doc"
+                      onClick={handleOpenActivityModal}
+                    >
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="17 8 12 3 7 8"></polyline>
-                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                        <path d="M12 5v14M5 12h14"></path>
                       </svg>
                       <span>Nueva Actividad</span>
                     </button>
                   </div>
-                  <div className="empty-state">
-                    <p>📋 No hay actividades registradas</p>
-                    <p style={{ fontSize: '14px', color: '#999' }}>Las actividades y tareas aparecerán aquí</p>
-                  </div>
+                  
+                  {loadingActivities ? (
+                    <div className="loading-state">
+                      <p>Cargando actividades...</p>
+                    </div>
+                  ) : activities.length === 0 ? (
+                    <div className="empty-state">
+                      <p>📋 No hay actividades registradas</p>
+                      <p style={{ fontSize: '14px', color: '#999' }}>Las actividades y tareas aparecerán aquí</p>
+                    </div>
+                  ) : (
+                    <div className="activities-list">
+                      {activities.map(activity => (
+                        <div key={activity.id} className="activity-card">
+                          <div className="activity-header">
+                            <div className="activity-type">
+                              {getActivityTypeLabel(activity.activity_type)}
+                            </div>
+                            <div className="activity-actions">
+                              <span 
+                                className="priority-badge" 
+                                style={{ backgroundColor: getPriorityColor(activity.priority) }}
+                              >
+                                {activity.priority}
+                              </span>
+                              <button
+                                className="btn-edit-activity"
+                                onClick={() => handleEditActivity(activity)}
+                                title="Editar actividad"
+                              >
+                                ✏️
+                              </button>
+                              <button
+                                className="btn-delete-activity"
+                                onClick={() => handleDeleteActivity(activity)}
+                                title="Eliminar actividad"
+                              >
+                                🗑️
+                              </button>
+                            </div>
+                          </div>
+                          
+                          <div className="activity-details">
+                            {activity.probable_activity_date && (
+                              <div className="activity-date">
+                                <strong>📅 Fecha probable:</strong> {formatDateTime(activity.probable_activity_date)}
+                              </div>
+                            )}
+                            
+                            {activity.completed_date && (
+                              <div className="activity-date completed">
+                                <strong>✅ Completada:</strong> {formatDateTime(activity.completed_date)}
+                              </div>
+                            )}
+                            
+                            {activity.assigned_lawyer && (
+                              <div className="activity-assignee">
+                                <strong>👤 Asignado a:</strong> {activity.assigned_lawyer.first_name} {activity.assigned_lawyer.last_name}
+                              </div>
+                            )}
+                            
+                            {activity.notes && (
+                              <div className="activity-notes">
+                                <strong>📝 Notas:</strong>
+                                <p>{activity.notes}</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -747,6 +973,161 @@ const CaseDetails = () => {
             )}
           </div>
         </div>
+
+        {/* Modal de Nueva Actividad */}
+        {showActivityModal && (
+          <div className="modal-overlay" onClick={() => setShowActivityModal(false)}>
+            <div className="modal-content activity-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2>{editingActivity ? 'Editar Actividad' : 'Nueva Actividad'}</h2>
+                <button 
+                  className="modal-close"
+                  onClick={() => setShowActivityModal(false)}
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="modal-body">
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label>Tipo de Actividad *</label>
+                    <select
+                      value={activityForm.activity_type}
+                      onChange={(e) => handleActivityFormChange('activity_type', e.target.value)}
+                      disabled={creatingActivity}
+                    >
+                      <option value="audiencia">⚖️ Audiencia</option>
+                      <option value="diligencia">📋 Diligencia</option>
+                      <option value="presentacion">📄 Presentación</option>
+                      <option value="notificacion">🔔 Notificación</option>
+                      <option value="reunion">👥 Reunión</option>
+                      <option value="otro">📌 Otro</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Prioridad</label>
+                    <select
+                      value={activityForm.priority}
+                      onChange={(e) => handleActivityFormChange('priority', e.target.value)}
+                      disabled={creatingActivity}
+                    >
+                      <option value="baja">Baja</option>
+                      <option value="media">Media</option>
+                      <option value="alta">Alta</option>
+                      <option value="urgente">Urgente</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Fecha Probable</label>
+                    <input
+                      type="datetime-local"
+                      value={activityForm.probable_activity_date}
+                      onChange={(e) => handleActivityFormChange('probable_activity_date', e.target.value)}
+                      disabled={creatingActivity}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Fecha de Completado</label>
+                    <input
+                      type="datetime-local"
+                      value={activityForm.completed_date}
+                      onChange={(e) => handleActivityFormChange('completed_date', e.target.value)}
+                      disabled={creatingActivity}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Asignar a</label>
+                    <select
+                      value={activityForm.assigned_to}
+                      onChange={(e) => handleActivityFormChange('assigned_to', e.target.value)}
+                      disabled={creatingActivity}
+                    >
+                      <option value="">Sin asignar</option>
+                      {lawyers.map(lawyer => (
+                        <option key={lawyer.id} value={lawyer.id}>
+                          {lawyer.first_name} {lawyer.last_name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="form-group full-width">
+                    <label>Notas</label>
+                    <textarea
+                      value={activityForm.notes}
+                      onChange={(e) => handleActivityFormChange('notes', e.target.value)}
+                      placeholder="Agrega notas o comentarios sobre esta actividad..."
+                      rows="4"
+                      disabled={creatingActivity}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button 
+                  className="btn-secondary"
+                  onClick={() => setShowActivityModal(false)}
+                  disabled={creatingActivity}
+                >
+                  Cancelar
+                </button>
+                <button 
+                  className="btn-primary"
+                  onClick={handleSaveActivity}
+                  disabled={creatingActivity}
+                >
+                  {creatingActivity ? (editingActivity ? 'Actualizando...' : 'Creando...') : (editingActivity ? 'Actualizar Actividad' : 'Crear Actividad')}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal de Confirmación de Eliminación de Actividad */}
+        {showDeleteActivityModal && (
+          <div className="modal-overlay" onClick={() => setShowDeleteActivityModal(false)}>
+            <div className="modal-content delete-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <div className="delete-icon">⚠️</div>
+                <h2>Eliminar Actividad</h2>
+              </div>
+              <div className="modal-body">
+                <p className="delete-warning">
+                  ¿Estás seguro de que deseas eliminar esta actividad?
+                </p>
+                {activityToDelete && (
+                  <div className="delete-details">
+                    <p><strong>Tipo:</strong> {getActivityTypeLabel(activityToDelete.activity_type)}</p>
+                    {activityToDelete.probable_activity_date && (
+                      <p><strong>Fecha:</strong> {formatDateTime(activityToDelete.probable_activity_date)}</p>
+                    )}
+                  </div>
+                )}
+                <p className="delete-description">
+                  Esta acción no se puede deshacer. La actividad será eliminada permanentemente.
+                </p>
+              </div>
+              <div className="modal-footer">
+                <button 
+                  className="btn-secondary"
+                  onClick={() => setShowDeleteActivityModal(false)}
+                >
+                  Cancelar
+                </button>
+                <button 
+                  className="btn-danger"
+                  onClick={confirmDeleteActivity}
+                >
+                  Eliminar Actividad
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
