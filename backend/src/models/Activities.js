@@ -18,14 +18,6 @@ const Activity = sequelize.define('Activity', {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
   },
-  title: {
-    type: DataTypes.STRING(200),
-    allowNull: false
-  },
-  description: {
-    type: DataTypes.TEXT,
-    allowNull: true
-  },
   activity_type: {
     type: DataTypes.STRING(50),
     allowNull: false,
@@ -33,11 +25,7 @@ const Activity = sequelize.define('Activity', {
       isIn: [['audiencia', 'diligencia', 'presentacion', 'notificacion', 'reunion', 'otro']]
     }
   },
-  activity_date: {
-    type: DataTypes.DATE,
-    allowNull: true
-  },
-  due_date: {
+  probable_activity_date: {
     type: DataTypes.DATE,
     allowNull: true
   },
@@ -52,26 +40,15 @@ const Activity = sequelize.define('Activity', {
       isIn: [['baja', 'media', 'alta', 'urgente']]
     }
   },
-  status: {
-    type: DataTypes.STRING(20),
-    defaultValue: 'pendiente',
-    validate: {
-      isIn: [['pendiente', 'en_progreso', 'completada', 'cancelada']]
-    }
-  },
   assigned_to: {
     type: DataTypes.UUID,
     allowNull: true,
     references: {
-      model: 'users',
+      model: 'lawyers',
       key: 'id'
     },
     onUpdate: 'CASCADE',
     onDelete: 'SET NULL'
-  },
-  location: {
-    type: DataTypes.STRING(255),
-    allowNull: true
   },
   notes: {
     type: DataTypes.TEXT,
