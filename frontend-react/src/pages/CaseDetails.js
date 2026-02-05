@@ -54,6 +54,8 @@ const CaseDetails = () => {
       fetchDocuments();
     } else if (activeTab === 'activities' && id) {
       fetchActivities();
+    } else if (activeTab === 'timeline' && id) {
+      fetchActivities();
     }
   }, [activeTab, id]);
 
@@ -337,6 +339,30 @@ const CaseDetails = () => {
       'otro': '📌 Otro'
     };
     return labels[type] || type;
+  };
+
+  const getSortedActivities = () => {
+    return [...activities].sort((a, b) => {
+      const dateA = a.probable_activity_date ? new Date(a.probable_activity_date) : new Date(0);
+      const dateB = b.probable_activity_date ? new Date(b.probable_activity_date) : new Date(0);
+      return dateA - dateB;
+    });
+  };
+
+  const getActivityIcon = (type) => {
+    const icons = {
+      'audiencia': '⚖️',
+      'diligencia': '📋',
+      'presentacion': '📄',
+      'notificacion': '🔔',
+      'reunion': '👥',
+      'otro': '📌'
+    };
+    return icons[type] || '📌';
+  };
+
+  const isActivityCompleted = (activity) => {
+    return activity.completed_date !== null;
   };
 
   const getLawyer = (id) => {
@@ -916,58 +942,87 @@ const CaseDetails = () => {
 
             {activeTab === 'timeline' && (
               <div className="tab-content">
-                <div className="timeline-section">
-                  <h3 className="section-title">Línea de Tiempo</h3>
-                  <div className="timeline">
-                    <div className="timeline-item">
-                      <div className="timeline-marker"></div>
-                      <div className="timeline-content">
-                        <div className="timeline-date">{formatDate(caseData.created_at)}</div>
-                        <div className="timeline-title">Caso Creado</div>
-                        <div className="timeline-description">El caso fue registrado en el sistema</div>
-                      </div>
+                <div className="timeline-section-new">
+                  
+                  {loadingActivities ? (
+                    <div className="loading-state">
+                      <p>Cargando línea de tiempo...</p>
                     </div>
-                    {caseData.area_assignment_date && (
-                      <div className="timeline-item">
-                        <div className="timeline-marker"></div>
-                        <div className="timeline-content">
-                          <div className="timeline-date">{formatDate(caseData.area_assignment_date)}</div>
-                          <div className="timeline-title">Asignación de Área</div>
-                          <div className="timeline-description">El caso fue asignado al área legal</div>
+                  ) : activities.length === 0 ? (
+                    <div className="empty-state">
+                      <p>📋 No hay actividades registradas</p>
+                      <p style={{ fontSize: '14px', color: '#999' }}>Las actividades aparecerán aquí en orden cronológico</p>
+                    </div>
+                  ) : (
+                    <div className="timeline-container">
+                      <div className="timeline-line"></div>
+                      {getSortedActivities().map((activity, index) => (
+                        <div 
+                          key={activity.id} 
+                          className={`timeline-activity-item ${isActivityCompleted(activity) ? 'completed' : ''} ${index % 2 === 0 ? 'left' : 'right'}`}
+                        >
+                          <div className="timeline-activity-marker">
+                            <div 
+                              className="timeline-marker-icon"
+                              style={{ backgroundColor: getPriorityColor(activity.priority) }}
+                            >
+                              {getActivityIcon(activity.activity_type)}
+                            </div>
+                          </div>
+                          
+                          <div className="timeline-activity-content">
+                            <div className="timeline-activity-header">
+                              <div className="timeline-activity-title">
+                                <span className="activity-type-name">{getActivityTypeLabel(activity.activity_type)}</span>
+                                <span 
+                                  className="timeline-priority-badge"
+                                  style={{ backgroundColor: getPriorityColor(activity.priority) }}
+                                >
+                                  {activity.priority}
+                                </span>
+                              </div>
+                              {isActivityCompleted(activity) && (
+                                <div className="completed-badge">
+                                  ✓ Completada
+                                </div>
+                              )}
+                            </div>
+                            
+                            <div className="timeline-activity-date">
+                              {activity.probable_activity_date ? (
+                                <>
+                                  <span className="date-icon">📅</span>
+                                  <span>{formatDateTime(activity.probable_activity_date)}</span>
+                                </>
+                              ) : (
+                                <span className="no-date">Sin fecha programada</span>
+                              )}
+                            </div>
+                            
+                            {activity.completed_date && (
+                              <div className="timeline-completed-date">
+                                <span className="date-icon">✅</span>
+                                <span>Completada el {formatDateTime(activity.completed_date)}</span>
+                              </div>
+                            )}
+                            
+                            {activity.assigned_lawyer && (
+                              <div className="timeline-assignee">
+                                <span className="assignee-icon">👤</span>
+                                <span>{activity.assigned_lawyer.first_name} {activity.assigned_lawyer.last_name}</span>
+                              </div>
+                            )}
+                            
+                            {activity.notes && (
+                              <div className="timeline-notes">
+                                <p>{activity.notes}</p>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    )}
-                    {caseData.internal_assignment_date && (
-                      <div className="timeline-item">
-                        <div className="timeline-marker"></div>
-                        <div className="timeline-content">
-                          <div className="timeline-date">{formatDate(caseData.internal_assignment_date)}</div>
-                          <div className="timeline-title">Asignación Interna</div>
-                          <div className="timeline-description">Asignado a: {getLawyer(caseData.internal_lawyer_id)}</div>
-                        </div>
-                      </div>
-                    )}
-                    {caseData.external_assignment_date && (
-                      <div className="timeline-item">
-                        <div className="timeline-marker"></div>
-                        <div className="timeline-content">
-                          <div className="timeline-date">{formatDate(caseData.external_assignment_date)}</div>
-                          <div className="timeline-title">Asignación Externa</div>
-                          <div className="timeline-description">Asignado a: {getLawyer(caseData.external_lawyer_id)}</div>
-                        </div>
-                      </div>
-                    )}
-                    {caseData.demand_date && (
-                      <div className="timeline-item">
-                        <div className="timeline-marker"></div>
-                        <div className="timeline-content">
-                          <div className="timeline-date">{formatDate(caseData.demand_date)}</div>
-                          <div className="timeline-title">Demanda Presentada</div>
-                          <div className="timeline-description">Se presentó la demanda formal</div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             )}
