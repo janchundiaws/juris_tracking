@@ -69,4 +69,17 @@ const Activity = sequelize.define('Activity', {
   updatedAt: 'updated_at'
 });
 
+// Definir asociaciones
+Activity.associate = (models) => {
+  Activity.belongsTo(models.JudicialProcess, {
+    foreignKey: 'judicial_process_id',
+    as: 'judicial_process'
+  });
+  
+  Activity.belongsTo(models.Lawyer, {
+    foreignKey: 'assigned_to',
+    as: 'assigned_lawyer'
+  });
+};
+
 module.exports = Activity;

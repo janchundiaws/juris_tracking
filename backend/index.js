@@ -13,6 +13,7 @@ const judicialProcessesRoutes = require('./src/routes/judicial-processes');
 const rabbitmqRoutes = require('./src/routes/rabbitmq');
 const rolesRoutes = require('./src/routes/roles');
 const documentsRoutes = require('./src/routes/documents');
+const activitiesRoutes = require('./src/routes/activities');
 const outlookRoutes = require('./src/routes/outlook');
 //const consultarProcesoRoutes = require('./src/routes/consultarproceso');
 const { startUserConsumer } = require('./src/consumers/userConsumer');
@@ -20,6 +21,7 @@ const Provincie = require('./src/models/Provincie');
 const Role = require('./src/models/Role');
 const Document = require('./src/models/Document');
 const Activity = require('./src/models/Activities');
+const Lawyer = require('./src/models/Lawyer');
 
 const app = express();
 const PORT = process.env.PORT || 3003;
@@ -56,8 +58,10 @@ app.use('/api/judicial-processes', judicialProcessesRoutes);
 app.use('/api/roles', rolesRoutes);
 // Rutas de documentos
 app.use('/api/documents', documentsRoutes);
+// Rutas de actividades
+app.use('/api/activities', activitiesRoutes);
 // Rutas de Outlook webhooks
-app.use('/api/outlook', outlookRoutes);
+//app.use('/api/outlook', outlookRoutes);
 // Rutas de consulta de procesos
 //app.use('/api/consultar-proceso', consultarProcesoRoutes);
 
@@ -121,6 +125,20 @@ const iniciarServidor = async () => {
   try {
     // Probar conexión a la base de datos
     await testConnection();
+
+    // Inicializar asociaciones de modelos
+    const models = {
+      Activity,
+      JudicialProcess: require('./src/models/JudicialProcess'),
+      Lawyer
+    };
+
+    Object.keys(models).forEach(modelName => {
+      if (models[modelName].associate) {
+        models[modelName].associate(models);
+      }
+    });
+    console.log('✅ Asociaciones de modelos inicializadas');
 
     // Sincronizar modelos con la base de datos
     // await sequelize.sync({ force: true });
