@@ -1,44 +1,47 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config/database');
 
-const Creditor = sequelize.define('Creditor', {
+const Tenant = sequelize.define('Tenant', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
     allowNull: false
   },
-  tenant_id: {
-    type: DataTypes.UUID,
-    allowNull: false,
-    references: {
-      model: 'tenants',
-      key: 'id'
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE'
-  },
   name: {
-    type: DataTypes.STRING(150),
+    type: DataTypes.STRING(200),
     allowNull: false,
     validate: {
       notEmpty: true,
-      len: [1, 150]
+      len: [1, 200]
     }
   },
-  ruc: {
-    type: DataTypes.STRING(20),
+  subdomain: {
+    type: DataTypes.STRING(100),
     allowNull: false,
     unique: true,
     validate: {
       notEmpty: true,
-      len: [1, 20]
+      len: [1, 100],
+      is: /^[a-z0-9-]+$/i // Solo letras, números y guiones
+    }
+  },
+  domain: {
+    type: DataTypes.STRING(200),
+    allowNull: true,
+    validate: {
+      isUrl: true
     }
   },
   status: {
     type: DataTypes.ENUM('active', 'inactive', 'suspended'),
     allowNull: false,
     defaultValue: 'active'
+  },
+  settings: {
+    type: DataTypes.JSONB,
+    allowNull: true,
+    defaultValue: {}
   },
   created_at: {
     type: DataTypes.DATE,
@@ -49,10 +52,19 @@ const Creditor = sequelize.define('Creditor', {
     defaultValue: DataTypes.NOW
   }
 }, {
-  tableName: 'creditors',
+  tableName: 'tenants',
   timestamps: true,
   createdAt: 'created_at',
-  updatedAt: 'updated_at'
+  updatedAt: 'updated_at',
+  indexes: [
+    {
+      unique: true,
+      fields: ['subdomain']
+    },
+    {
+      fields: ['status']
+    }
+  ]
 });
 
-module.exports = Creditor;
+module.exports = Tenant;

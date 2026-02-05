@@ -8,6 +8,16 @@ const JudicialProcess = sequelize.define('JudicialProcess', {
     primaryKey: true,
     allowNull: false
   },
+  tenant_id: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    references: {
+      model: 'tenants',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
+  },
   internal_lawyer_id: {
     type: DataTypes.UUID,
     allowNull: true,

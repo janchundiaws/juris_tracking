@@ -8,6 +8,16 @@ const Document = sequelize.define("Document", {
     primaryKey: true,
     allowNull: false
   },
+  tenant_id: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    references: {
+      model: 'tenants',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
+  },
   judicial_process_id: {
     type: DataTypes.UUID,
     allowNull: false

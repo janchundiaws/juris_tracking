@@ -56,6 +56,16 @@ const User = sequelize.define('User', {
     onUpdate: 'CASCADE',
     onDelete: 'RESTRICT'
   },
+  tenant_id: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    references: {
+      model: 'tenants',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
+  },
   status: {
     type: DataTypes.ENUM('activo', 'inactivo', 'suspendido'),
     allowNull: false

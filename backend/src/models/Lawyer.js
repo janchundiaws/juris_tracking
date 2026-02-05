@@ -8,6 +8,16 @@ const Lawyer = sequelize.define('Lawyer', {
     primaryKey: true,
     allowNull: false
   },
+  tenant_id: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    references: {
+      model: 'tenants',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
+  },
   first_name: {
     type: DataTypes.STRING(100),
     allowNull: false,

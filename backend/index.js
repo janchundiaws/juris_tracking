@@ -14,14 +14,18 @@ const rabbitmqRoutes = require('./src/routes/rabbitmq');
 const rolesRoutes = require('./src/routes/roles');
 const documentsRoutes = require('./src/routes/documents');
 const activitiesRoutes = require('./src/routes/activities');
-const outlookRoutes = require('./src/routes/outlook');
-//const consultarProcesoRoutes = require('./src/routes/consultarproceso');
 const { startUserConsumer } = require('./src/consumers/userConsumer');
+const { tenantMiddleware, optionalTenantMiddleware } = require('./src/middleware/tenant');
+const { addTenantScope } = require('./src/middleware/tenantScope');
+const Tenant = require('./src/models/Tenant');
 const Provincie = require('./src/models/Provincie');
 const Role = require('./src/models/Role');
 const Document = require('./src/models/Document');
 const Activity = require('./src/models/Activities');
 const Lawyer = require('./src/models/Lawyer');
+const User = require('./src/models/User');
+const Creditor = require('./src/models/Creditor');
+const JudicialProcess = require('./src/models/JudicialProcess');
 
 const app = express();
 const PORT = process.env.PORT || 3003;
@@ -39,6 +43,26 @@ app.use(express.json());
 // Swagger Documentation
 swaggerDocs(app, PORT);
 
+// Middleware de tenant - Aplicar a todas las rutas de API excepto las públicas
+// Rutas públicas que no requieren tenant (opcional)
+const publicRoutes = ['/api/health', '/api-docs'];
+app.use((req, res, next) => {
+  // Saltar middleware de tenant para rutas públicas
+  if (publicRoutes.some(route => req.path.startsWith(route))) {
+    return next();
+  }
+  
+  // Aplicar middleware de tenant opcional para auth
+  if (req.path.startsWith('/api/auth')) {
+    return optionalTenantMiddleware(req, res, next);
+  }
+  
+  // Aplicar middleware de tenant obligatorio para el resto
+  return tenantMiddleware(req, res, next);
+});
+// Rutas de Tenants
+const tenantsRoutes = require('./src/routes/tenants');
+app.use('/api/tenants', tenantsRoutes);
 
 // Rutas de RabbitMQ
 app.use('/api/rabbitmq', rabbitmqRoutes);
@@ -73,34 +97,52 @@ app.use((req, res) => {
 // Función para insertar datos iniciales de provincias
 const insertDataInicial = async () => {
   try {
-    const count = await Provincie.count();
-    if (count === 0) {
-      const defaultProvincies = [
-        { name: 'Manabi', postal_code: '13' },
-        { name: 'Pichincha', postal_code: '17' },
-        { name: 'Guayas', postal_code: '09' },
-        { name: 'Azuay', postal_code: '01' },
-        { name: 'El Oro', postal_code: '07' },
-        { name: 'Loja', postal_code: '11' },
-        { name: 'Tungurahua', postal_code: '18' },
-        { name: 'Cotopaxi', postal_code: '03' },
-        { name: 'Imbabura', postal_code: '10' },
-        { name: 'Carchi', postal_code: '02' },
-        { name: 'Chimborazo', postal_code: '06' },
-        { name: 'Bolivar', postal_code: '04' },
-        { name: 'Zamora-Chinchipe', postal_code: '20' },
-        { name: 'Sucumbios', postal_code: '22' },
-        { name: 'Orellana', postal_code: '15' },
-        { name: 'Napo', postal_code: '14' },
-        { name: 'Pastaza', postal_code: '16' },
-        { name: 'Santo Domingo de los Tsáchilas', postal_code: '24' },
-        { name: 'Santa Elena', postal_code: '26' },
-        { name: 'Galápagos', postal_code: '23' }
+    // Insertar tenant por defecto para localhost
+    const countTenants = await Tenant.count();
+    if (countTenants === 0) {
+      await Tenant.create({
+        name: 'Desarrollo Local',
+        subdomain: 'localhost',
+        domain: null,
+        status: 'active',
+        settings: {
+          timezone: 'America/Guayaquil',
+          language: 'es',
+          theme: 'light'
+        }
+      });
+      console.log('✅ Tenant por defecto (localhost) insertado');
+    }
 
-      ];
+    // const count = await Provincie.count();
+    //  if (count === 0) {
+    //   const defaultProvincies = [
+    //     { name: 'Manabi', postal_code: '13' },
+    //     { name: 'Pichincha', postal_code: '17' },
+    //     { name: 'Guayas', postal_code: '09' },
+    //     { name: 'Azuay', postal_code: '01' },
+    //     { name: 'El Oro', postal_code: '07' },
+    //     { name: 'Loja', postal_code: '11' },
+    //     { name: 'Tungurahua', postal_code: '18' },
+    //     { name: 'Cotopaxi', postal_code: '03' },
+    //     { name: 'Imbabura', postal_code: '10' },
+    //     { name: 'Carchi', postal_code: '02' },
+    //     { name: 'Chimborazo', postal_code: '06' },
+    //     { name: 'Bolivar', postal_code: '04' },
+    //     { name: 'Zamora-Chinchipe', postal_code: '20' },
+    //     { name: 'Sucumbios', postal_code: '22' },
+    //     { name: 'Orellana', postal_code: '15' },
+    //     { name: 'Napo', postal_code: '14' },
+    //     { name: 'Pastaza', postal_code: '16' },
+    //     { name: 'Santo Domingo de los Tsáchilas', postal_code: '24' },
+    //     { name: 'Santa Elena', postal_code: '26' },
+    //     { name: 'Galápagos', postal_code: '23' }
+
+    //   ];
       
-      await Provincie.bulkCreate(defaultProvincies);
-      console.log('✅ Datos iniciales de provincias insertados');
+    //   await Provincie.bulkCreate(defaultProvincies);
+    //   console.log('✅ Datos iniciales de provincias insertados');
+      // }
 
       const countRoles = await Role.count();
       if (countRoles === 0) {
@@ -114,9 +156,8 @@ const insertDataInicial = async () => {
         console.log('✅ Datos iniciales de roles insertados');  
     }
 
-    }
   } catch (error) {
-    console.error('❌ Error al insertar datos iniciales de provincias:', error);
+    console.error('❌ Error al insertar datos iniciales:', error);
   }
 };
 
@@ -126,11 +167,23 @@ const iniciarServidor = async () => {
     // Probar conexión a la base de datos
     await testConnection();
 
+    // Aplicar scopes de tenant a los modelos que lo requieren
+    const tenantModels = [User, Lawyer, Creditor, JudicialProcess, Document, Activity, Role];
+    tenantModels.forEach(model => {
+      addTenantScope(model);
+    });
+    console.log('✅ Scopes de tenant aplicados a los modelos');
+
     // Inicializar asociaciones de modelos
     const models = {
+      Tenant,
       Activity,
-      JudicialProcess: require('./src/models/JudicialProcess'),
-      Lawyer
+      JudicialProcess,
+      Lawyer,
+      User,
+      Creditor,
+      Document,
+      Role
     };
 
     Object.keys(models).forEach(modelName => {

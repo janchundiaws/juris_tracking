@@ -58,20 +58,30 @@ router.post('/registro', async (req, res) => {
       return res.status(400).json({ error: 'Todos los campos son requeridos' });
     }
 
+    // Verificar usuario existente en el contexto del tenant
     const { Op } = require("sequelize");
     const usuarioExistente = await User.findOne({ 
-    where: {
+      where: {
         [Op.or]: [
-            { email: email },
-            { username: username }
-            ]
-        }
+          { email: email },
+          { username: username }
+        ]
+      },
+      tenantId: req.tenantId
     });
+    
     if (usuarioExistente) {
       return res.status(400).json({ error: 'El email o el nombre de usuario ya están registrados' });
     }
 
+    // Verificar que tenemos un tenantId
+    if (!req.tenantId) {
+      return res.status(400).json({ error: 'No se pudo determinar el tenant. Asegúrate de acceder desde un subdominio válido.' });
+    }
+
+    // Crear usuario con tenant_id
     const usuario = await User.create({
+      tenant_id: req.tenantId,
       username,
       password,
       first_name,
@@ -84,6 +94,7 @@ router.post('/registro', async (req, res) => {
     const token = generateToken({
       id: usuario.id,
       email: usuario.email,
+      tenant_id: usuario.tenant_id,
       role_id: usuario.role_id
     });
 
@@ -148,7 +159,12 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Email y password requeridos' });
     }
 
-    const usuario = await User.findOne({ where: { email } });
+    // Buscar usuario en el contexto del tenant (si existe)
+    const usuario = await User.findOne({ 
+      where: { email },
+      tenantId: req.tenantId
+    });
+    
     if (!usuario) {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
@@ -161,7 +177,8 @@ router.post('/login', async (req, res) => {
     const token = generateToken({
       id: usuario.id,
       email: usuario.email,
-      role_id: usuario.role_id
+      role_id: usuario.role_id,
+      tenant_id: usuario.tenant_id
     });
 
     res.json({
@@ -200,7 +217,8 @@ router.post('/login', async (req, res) => {
 router.get('/', verifyToken, async (req, res) => {
   try {
     const usuarios = await User.findAll({
-      attributes: { exclude: ['password'] }
+      attributes: { exclude: ['password'] },
+      tenantId: req.tenantId
     });
     res.json(usuarios);
   } catch (error) {
@@ -232,7 +250,8 @@ router.get('/', verifyToken, async (req, res) => {
 router.get('/:id', verifyToken, async (req, res) => {
   try {
     const usuario = await User.findByPk(req.params.id, {
-      attributes: { exclude: ['password'] }
+      attributes: { exclude: ['password'] },
+      tenantId: req.tenantId
     });
 
     if (!usuario) {
