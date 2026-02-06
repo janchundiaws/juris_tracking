@@ -14,6 +14,7 @@ const rabbitmqRoutes = require('./src/routes/rabbitmq');
 const rolesRoutes = require('./src/routes/roles');
 const documentsRoutes = require('./src/routes/documents');
 const activitiesRoutes = require('./src/routes/activities');
+const eventsRoutes = require('./src/routes/events');
 const { startUserConsumer } = require('./src/consumers/userConsumer');
 const { tenantMiddleware, optionalTenantMiddleware } = require('./src/middleware/tenant');
 const { addTenantScope } = require('./src/middleware/tenantScope');
@@ -26,6 +27,7 @@ const Lawyer = require('./src/models/Lawyer');
 const User = require('./src/models/User');
 const Creditor = require('./src/models/Creditor');
 const JudicialProcess = require('./src/models/JudicialProcess');
+const Event = require('./src/models/Events');
 
 const app = express();
 const PORT = process.env.PORT || 3003;
@@ -84,6 +86,8 @@ app.use('/api/roles', rolesRoutes);
 app.use('/api/documents', documentsRoutes);
 // Rutas de actividades
 app.use('/api/activities', activitiesRoutes);
+// Rutas de eventos
+app.use('/api/events', eventsRoutes);
 // Rutas de Outlook webhooks
 //app.use('/api/outlook', outlookRoutes);
 // Rutas de consulta de procesos
@@ -168,7 +172,7 @@ const iniciarServidor = async () => {
     await testConnection();
 
     // Aplicar scopes de tenant a los modelos que lo requieren
-    const tenantModels = [User, Lawyer, Creditor, JudicialProcess, Document, Activity, Role];
+    const tenantModels = [User, Lawyer, Creditor, JudicialProcess, Document, Activity, Role, Event];
     tenantModels.forEach(model => {
       addTenantScope(model);
     });
@@ -183,7 +187,8 @@ const iniciarServidor = async () => {
       User,
       Creditor,
       Document,
-      Role
+      Role,
+      Event
     };
 
     Object.keys(models).forEach(modelName => {
