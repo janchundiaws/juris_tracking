@@ -120,7 +120,7 @@ const Creditors = () => {
       fetchCreditors();
     } catch (err) {
       console.error('Error al guardar acreedor:', err);
-      setError(err.response?.data?.message || 'Error al guardar el acreedor');
+      setError('Error al guardar acreedor: ' + err);
     } finally {
       setLoading(false);
     }

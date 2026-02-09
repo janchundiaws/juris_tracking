@@ -13,6 +13,7 @@ import Creditors from './pages/Creditors';
 import Calendar from './pages/Calendar';
 import Maestro from './pages/Maestro';
 import Reports from './pages/Reports';
+import Settings from './pages/Settings';
 import './App.css';
 
 function App() {
@@ -135,10 +136,7 @@ function App() {
             path="/settings"
             element={
               <PrivateRoute>
-                <div style={{ padding: '40px', textAlign: 'center' }}>
-                  <h1>Configuración</h1>
-                  <p>Módulo en desarrollo</p>
-                </div>
+                <Settings />
               </PrivateRoute>
             }
           />

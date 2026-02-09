@@ -4,6 +4,7 @@ const User = require('../models/User');
 const { generateToken } = require('../middleware/auth');
 const { verifyToken } = require('../middleware/auth');
 const { publishNewUserEvent, publishUserUpdatedEvent } = require('../config/rabbitmq');
+const { tenantMiddleware } = require('../middleware/tenant');
 
 /**
  * @swagger
@@ -50,7 +51,7 @@ const { publishNewUserEvent, publishUserUpdatedEvent } = require('../config/rabb
  *       400:
  *         description: Error en los datos proporcionados
  */
-router.post('/registro', async (req, res) => {
+router.post('/registro', tenantMiddleware, async (req, res) => {
   try {
     const { username, password, first_name, last_name, email, role_id, status } = req.body;
 
@@ -67,7 +68,7 @@ router.post('/registro', async (req, res) => {
           { username: username }
         ]
       },
-      tenantId: req.tenantId
+      where: { tenant_id: req.tenantId }
     });
     
     if (usuarioExistente) {
@@ -98,16 +99,16 @@ router.post('/registro', async (req, res) => {
       role_id: usuario.role_id
     });
 
-    // Publicar mensaje en RabbitMQ
-    await publishNewUserEvent({
-      id: usuario.id,
-      username: usuario.username,
-      first_name: usuario.first_name,
-      last_name: usuario.last_name,
-      email: usuario.email,
-      role_id: usuario.role_id,
-      status: usuario.status
-    });
+    // // Publicar mensaje en RabbitMQ
+    // await publishNewUserEvent({
+    //   id: usuario.id,
+    //   username: usuario.username,
+    //   first_name: usuario.first_name,
+    //   last_name: usuario.last_name,
+    //   email: usuario.email,
+    //   role_id: usuario.role_id,
+    //   status: usuario.status
+    // });
 
     res.status(201).json({
       message: 'Usuario registrado exitosamente',
@@ -151,7 +152,7 @@ router.post('/registro', async (req, res) => {
  *       401:
  *         description: Credenciales inválidas
  */
-router.post('/login', async (req, res) => {
+router.post('/login', tenantMiddleware, async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -161,8 +162,7 @@ router.post('/login', async (req, res) => {
 
     // Buscar usuario en el contexto del tenant (si existe)
     const usuario = await User.findOne({ 
-      where: { email },
-      tenantId: req.tenantId
+      where: { email, tenant_id: req.tenantId }
     });
     
     if (!usuario) {
@@ -306,9 +306,11 @@ router.get('/:id', verifyToken, async (req, res) => {
  *       404:
  *         description: Usuario no encontrado
  */
-router.put('/:id', verifyToken, async (req, res) => {
+router.put('/:id', tenantMiddleware, verifyToken, async (req, res) => {
   try {
-    const usuario = await User.findByPk(req.params.id);
+    const usuario = await User.findByPk(req.params.id, {
+      where: { tenant_id: req.tenantId }
+    });
 
     if (!usuario) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
@@ -364,9 +366,11 @@ router.put('/:id', verifyToken, async (req, res) => {
  *       404:
  *         description: Usuario no encontrado
  */
-router.delete('/:id', verifyToken, async (req, res) => {
+router.delete('/:id',tenantMiddleware, verifyToken, async (req, res) => {
   try {
-    const usuario = await User.findByPk(req.params.id);
+    const usuario = await User.findByPk(req.params.id, {
+      where: { tenant_id: req.tenantId }
+    });
 
     if (!usuario) {
       return res.status(404).json({ error: 'Usuario no encontrado' });

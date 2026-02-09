@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Lawyer = require('../models/Lawyer');
 const { verifyToken } = require('../middleware/auth');
-const tenantMiddleware = require('../middleware/tenant');
+const { tenantMiddleware } = require('../middleware/tenant');
 
 /**
  * @swagger
@@ -17,9 +17,10 @@ const tenantMiddleware = require('../middleware/tenant');
  *       500:
  *         description: Error del servidor
  */
-router.get('/', async (req, res) => {
+router.get('/', tenantMiddleware, async (req, res) => {
   try {
     const lawyers = await Lawyer.findAll({
+      where: { tenant_id: req.tenantId },
       order: [['last_name', 'ASC'], ['first_name', 'ASC']]
     });
     res.json(lawyers);
@@ -47,9 +48,11 @@ router.get('/', async (req, res) => {
  *       404:
  *         description: Abogado no encontrado
  */
-router.get('/:id', async (req, res) => {
+router.get('/:id', tenantMiddleware, async (req, res) => {
   try {
-    const lawyer = await Lawyer.findByPk(req.params.id);
+    const lawyer = await Lawyer.findByPk(req.params.id, {
+      where: { tenant_id: req.tenantId }
+    });
 
     if (!lawyer) {
       return res.status(404).json({ error: 'Abogado no encontrado' });
@@ -191,9 +194,11 @@ router.post('/',tenantMiddleware, verifyToken, async (req, res) => {
  *       404:
  *         description: Abogado no encontrado
  */
-router.put('/:id', verifyToken, async (req, res) => {
+router.put('/:id', tenantMiddleware, verifyToken, async (req, res) => {
   try {
-    const lawyer = await Lawyer.findByPk(req.params.id);
+    const lawyer = await Lawyer.findByPk(req.params.id, {
+      where: { tenant_id: req.tenantId }
+    });
 
     if (!lawyer) {
       return res.status(404).json({ error: 'Abogado no encontrado' });
@@ -231,9 +236,11 @@ router.put('/:id', verifyToken, async (req, res) => {
  *       404:
  *         description: Abogado no encontrado
  */
-router.delete('/:id', verifyToken, async (req, res) => {
+router.delete('/:id', tenantMiddleware, verifyToken, async (req, res) => {
   try {
-    const lawyer = await Lawyer.findByPk(req.params.id);
+    const lawyer = await Lawyer.findByPk(req.params.id, {
+      where: { tenant_id: req.tenantId }
+    });
 
     if (!lawyer) {
       return res.status(404).json({ error: 'Abogado no encontrado' });

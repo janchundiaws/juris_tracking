@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const JudicialProcess = require('../models/JudicialProcess');
 const { verifyToken } = require('../middleware/auth');
+const { tenantMiddleware } = require('../middleware/tenant');
 
 /**
  * @swagger
@@ -18,9 +19,10 @@ const { verifyToken } = require('../middleware/auth');
  *       500:
  *         description: Error del servidor
  */
-router.get('/', verifyToken, async (req, res) => {
+router.get('/', tenantMiddleware , verifyToken, async (req, res) => {
   try {
     const processes = await JudicialProcess.findAll({
+      where: { tenant_id: req.tenantId },
       order: [['created_at', 'DESC']]
     });
     res.json(processes);
@@ -50,9 +52,11 @@ router.get('/', verifyToken, async (req, res) => {
  *       404:
  *         description: Proceso no encontrado
  */
-router.get('/:id', verifyToken, async (req, res) => {
+router.get('/:id', tenantMiddleware, verifyToken, async (req, res) => {
   try {
-    const process = await JudicialProcess.findByPk(req.params.id);
+    const process = await JudicialProcess.findByPk(req.params.id, {
+      where: { tenant_id: req.tenantId }
+    });
 
     if (!process) {
       return res.status(404).json({ error: 'Proceso judicial no encontrado' });
@@ -138,7 +142,7 @@ router.get('/:id', verifyToken, async (req, res) => {
  *       400:
  *         description: Error en los datos proporcionados
  */
-router.post('/', verifyToken, async (req, res) => {
+router.post('/',tenantMiddleware, verifyToken, async (req, res) => {
   try {
     const { identification, full_name, process_type, status, case_number } = req.body;
 
@@ -151,7 +155,7 @@ router.post('/', verifyToken, async (req, res) => {
     // Verificar si el número de caso ya existe
     if (case_number) {
       const existingProcess = await JudicialProcess.findOne({
-        where: { case_number }
+        where: { case_number, tenant_id: req.tenantId }
       });
 
       if (existingProcess) {
@@ -163,6 +167,7 @@ router.post('/', verifyToken, async (req, res) => {
 
     const process = await JudicialProcess.create({
       ...req.body,
+      tenant_id: req.tenantId,
       created_by: req.user.id
     });
 
@@ -256,9 +261,9 @@ router.post('/', verifyToken, async (req, res) => {
  *       404:
  *         description: Proceso no encontrado
  */
-router.put('/:id', verifyToken, async (req, res) => {
+router.put('/:id', tenantMiddleware , verifyToken, async (req, res) => {
   try {
-    const process = await JudicialProcess.findByPk(req.params.id);
+    const process = await JudicialProcess.findByPk(req.params.id, { where: { tenant_id: req.tenantId } });
 
     if (!process) {
       return res.status(404).json({ error: 'Proceso judicial no encontrado' });
@@ -299,9 +304,11 @@ router.put('/:id', verifyToken, async (req, res) => {
  *       404:
  *         description: Proceso no encontrado
  */
-router.delete('/:id', verifyToken, async (req, res) => {
+router.delete('/:id', tenantMiddleware, verifyToken, async (req, res) => {
   try {
-    const process = await JudicialProcess.findByPk(req.params.id);
+    const process = await JudicialProcess.findByPk(req.params.id, {
+      where: { tenant_id: req.tenantId }
+    });
 
     if (!process) {
       return res.status(404).json({ error: 'Proceso judicial no encontrado' });

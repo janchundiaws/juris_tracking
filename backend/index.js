@@ -102,63 +102,63 @@ app.use((req, res) => {
 const insertDataInicial = async () => {
   try {
     // Insertar tenant por defecto para localhost
-    const countTenants = await Tenant.count();
-    if (countTenants === 0) {
-      await Tenant.create({
-        name: 'Desarrollo Local',
-        subdomain: 'localhost',
-        domain: null,
-        status: 'active',
-        settings: {
-          timezone: 'America/Guayaquil',
-          language: 'es',
-          theme: 'light'
-        }
-      });
-      console.log('✅ Tenant por defecto (localhost) insertado');
-    }
+    // const countTenants = await Tenant.count();
+    // if (countTenants === 0) {
+    //   await Tenant.create({
+    //     name: 'Desarrollo Local',
+    //     subdomain: 'localhost',
+    //     domain: null,
+    //     status: 'active',
+    //     settings: {
+    //       timezone: 'America/Guayaquil',
+    //       language: 'es',
+    //       theme: 'light'
+    //     }
+    //   });
+    //   console.log('✅ Tenant por defecto (localhost) insertado');
+    // }
 
-    // const count = await Provincie.count();
-    //  if (count === 0) {
-    //   const defaultProvincies = [
-    //     { name: 'Manabi', postal_code: '13' },
-    //     { name: 'Pichincha', postal_code: '17' },
-    //     { name: 'Guayas', postal_code: '09' },
-    //     { name: 'Azuay', postal_code: '01' },
-    //     { name: 'El Oro', postal_code: '07' },
-    //     { name: 'Loja', postal_code: '11' },
-    //     { name: 'Tungurahua', postal_code: '18' },
-    //     { name: 'Cotopaxi', postal_code: '03' },
-    //     { name: 'Imbabura', postal_code: '10' },
-    //     { name: 'Carchi', postal_code: '02' },
-    //     { name: 'Chimborazo', postal_code: '06' },
-    //     { name: 'Bolivar', postal_code: '04' },
-    //     { name: 'Zamora-Chinchipe', postal_code: '20' },
-    //     { name: 'Sucumbios', postal_code: '22' },
-    //     { name: 'Orellana', postal_code: '15' },
-    //     { name: 'Napo', postal_code: '14' },
-    //     { name: 'Pastaza', postal_code: '16' },
-    //     { name: 'Santo Domingo de los Tsáchilas', postal_code: '24' },
-    //     { name: 'Santa Elena', postal_code: '26' },
-    //     { name: 'Galápagos', postal_code: '23' }
+    const count = await Provincie.count();
+     if (count === 0) {
+      const defaultProvincies = [
+        { name: 'Manabi', postal_code: '13' },
+        { name: 'Pichincha', postal_code: '17' },
+        { name: 'Guayas', postal_code: '09' },
+        { name: 'Azuay', postal_code: '01' },
+        { name: 'El Oro', postal_code: '07' },
+        { name: 'Loja', postal_code: '11' },
+        { name: 'Tungurahua', postal_code: '18' },
+        { name: 'Cotopaxi', postal_code: '03' },
+        { name: 'Imbabura', postal_code: '10' },
+        { name: 'Carchi', postal_code: '02' },
+        { name: 'Chimborazo', postal_code: '06' },
+        { name: 'Bolivar', postal_code: '04' },
+        { name: 'Zamora-Chinchipe', postal_code: '20' },
+        { name: 'Sucumbios', postal_code: '22' },
+        { name: 'Orellana', postal_code: '15' },
+        { name: 'Napo', postal_code: '14' },
+        { name: 'Pastaza', postal_code: '16' },
+        { name: 'Santo Domingo de los Tsáchilas', postal_code: '24' },
+        { name: 'Santa Elena', postal_code: '26' },
+        { name: 'Galápagos', postal_code: '23' }
 
-    //   ];
+      ];
       
-    //   await Provincie.bulkCreate(defaultProvincies);
-    //   console.log('✅ Datos iniciales de provincias insertados');
-      // }
+      await Provincie.bulkCreate(defaultProvincies);
+      console.log('✅ Datos iniciales de provincias insertados');
+      }
 
-      const countRoles = await Role.count();
-      if (countRoles === 0) {
-        const defaultRoles = [
-          { name: 'admin' ,description: 'Administrador del sistema'},
-          { name: 'abogado', description: 'Usuario con rol de abogado' },
-          { name: 'asistente', description: 'Usuario con rol de asistente'}
-        ];
+    //   const countRoles = await Role.count();
+    //   if (countRoles === 0) {
+    //     const defaultRoles = [
+    //       { name: 'admin' ,description: 'Administrador del sistema'},
+    //       { name: 'abogado', description: 'Usuario con rol de abogado' },
+    //       { name: 'asistente', description: 'Usuario con rol de asistente'}
+    //     ];
         
-        await Role.bulkCreate(defaultRoles);
-        console.log('✅ Datos iniciales de roles insertados');  
-    }
+    //     await Role.bulkCreate(defaultRoles);
+    //     console.log('✅ Datos iniciales de roles insertados');  
+    // }
 
   } catch (error) {
     console.error('❌ Error al insertar datos iniciales:', error);

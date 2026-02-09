@@ -4,6 +4,7 @@ const Activity = require('../models/Activities');
 const JudicialProcess = require('../models/JudicialProcess');
 const Lawyer = require('../models/Lawyer');
 const { verifyToken } = require('../middleware/auth');
+const { tenantMiddleware } = require('../middleware/tenant');
 
 /**
  * @swagger
@@ -41,10 +42,12 @@ const { verifyToken } = require('../middleware/auth');
  *       500:
  *         description: Error del servidor
  */
-router.get('/', verifyToken, async (req, res) => {
+router.get('/',tenantMiddleware, verifyToken, async (req, res) => {
   try {
     const { judicial_process_id, activity_type, priority, assigned_to } = req.query;
     const whereClause = {};
+
+    whereClause.tenant_id = req.tenantId; // Asegurar que solo se obtengan actividades del tenant actual
     
     if (judicial_process_id) {
       whereClause.judicial_process_id = judicial_process_id;
@@ -107,12 +110,12 @@ router.get('/', verifyToken, async (req, res) => {
  *       500:
  *         description: Error del servidor
  */
-router.get('/process/:judicial_process_id', verifyToken, async (req, res) => {
+router.get('/process/:judicial_process_id', tenantMiddleware, verifyToken, async (req, res) => {
   try {
     const { judicial_process_id } = req.params;
 
     const activities = await Activity.findAll({
-      where: { judicial_process_id },
+      where: { judicial_process_id, tenant_id: req.tenantId },
       include: [
         {
           model: JudicialProcess,
@@ -158,9 +161,10 @@ router.get('/process/:judicial_process_id', verifyToken, async (req, res) => {
  *       500:
  *         description: Error del servidor
  */
-router.get('/:id', verifyToken, async (req, res) => {
+router.get('/:id', tenantMiddleware, verifyToken, async (req, res) => {
   try {
     const activity = await Activity.findByPk(req.params.id, {
+      where: { tenant_id: req.tenantId },
       include: [
         {
           model: JudicialProcess,
@@ -230,7 +234,7 @@ router.get('/:id', verifyToken, async (req, res) => {
  *       500:
  *         description: Error del servidor
  */
-router.post('/', verifyToken, async (req, res) => {
+router.post('/', tenantMiddleware, verifyToken, async (req, res) => {
   try {
     const {
       judicial_process_id,
@@ -274,7 +278,8 @@ router.post('/', verifyToken, async (req, res) => {
       completed_date,
       priority: priority || 'media',
       assigned_to,
-      notes
+      notes,
+      tenant_id: req.tenantId,
     });
 
     res.status(201).json({
@@ -335,7 +340,7 @@ router.post('/', verifyToken, async (req, res) => {
  *       500:
  *         description: Error del servidor
  */
-router.put('/:id', verifyToken, async (req, res) => {
+router.put('/:id', tenantMiddleware, verifyToken, async (req, res) => {
   try {
     const activity = await Activity.findByPk(req.params.id);
     
@@ -378,7 +383,8 @@ router.put('/:id', verifyToken, async (req, res) => {
       completed_date: completed_date !== undefined ? completed_date : activity.completed_date,
       priority: priority || activity.priority,
       assigned_to: assigned_to !== undefined ? assigned_to : activity.assigned_to,
-      notes: notes !== undefined ? notes : activity.notes
+      notes: notes !== undefined ? notes : activity.notes,
+      tenant_id: req.tenantId
     });
 
     res.json({
@@ -414,9 +420,11 @@ router.put('/:id', verifyToken, async (req, res) => {
  *       500:
  *         description: Error del servidor
  */
-router.delete('/:id', verifyToken, async (req, res) => {
+router.delete('/:id', tenantMiddleware, verifyToken, async (req, res) => {
   try {
-    const activity = await Activity.findByPk(req.params.id);
+    const activity = await Activity.findByPk(req.params.id, {
+      where: { tenant_id: req.tenantId }
+    });
     
     if (!activity) {
       return res.status(404).json({ error: 'Actividad no encontrada' });

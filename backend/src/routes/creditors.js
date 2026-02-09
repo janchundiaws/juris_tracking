@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Creditor = require('../models/Creditor');
 const { verifyToken } = require('../middleware/auth');
+const { tenantMiddleware } = require('../middleware/tenant');
 
 /**
  * @swagger
@@ -16,9 +17,10 @@ const { verifyToken } = require('../middleware/auth');
  *       500:
  *         description: Error del servidor
  */
-router.get('/', async (req, res) => {
+router.get('/', tenantMiddleware , async (req, res) => {
   try {
     const creditors = await Creditor.findAll({
+      where: { tenant_id: req.tenantId },
       order: [['name', 'ASC']]
     });
     res.json(creditors);
@@ -46,9 +48,11 @@ router.get('/', async (req, res) => {
  *       404:
  *         description: Acreedor no encontrado
  */
-router.get('/:id', async (req, res) => {
+router.get('/:id', tenantMiddleware,  async (req, res) => {
   try {
-    const creditor = await Creditor.findByPk(req.params.id);
+    const creditor = await Creditor.findByPk(req.params.id, {
+      where: { tenant_id: req.tenantId }
+    });
 
     if (!creditor) {
       return res.status(404).json({ error: 'Acreedor no encontrado' });
@@ -93,7 +97,7 @@ router.get('/:id', async (req, res) => {
  *       400:
  *         description: Error en los datos proporcionados
  */
-router.post('/', verifyToken, async (req, res) => {
+router.post('/', tenantMiddleware, verifyToken, async (req, res) => {
   try {
     const { name, ruc, status } = req.body;
 
@@ -101,7 +105,7 @@ router.post('/', verifyToken, async (req, res) => {
       return res.status(400).json({ error: 'Los campos name, ruc y status son requeridos' });
     }
 
-    const creditorExisting = await Creditor.findOne({ where: { ruc } });
+    const creditorExisting = await Creditor.findOne({ where: { ruc, tenant_id: req.tenantId } });
     if (creditorExisting) {
       return res.status(400).json({ error: 'El RUC ya está registrado' });
     }
@@ -109,7 +113,8 @@ router.post('/', verifyToken, async (req, res) => {
     const creditor = await Creditor.create({
       name,
       ruc,
-      status
+      status,
+      tenant_id: req.tenantId
     });
 
     res.status(201).json({
@@ -156,9 +161,11 @@ router.post('/', verifyToken, async (req, res) => {
  *       404:
  *         description: Acreedor no encontrado
  */
-router.put('/:id', verifyToken, async (req, res) => {
+router.put('/:id', tenantMiddleware, verifyToken, async (req, res) => {
   try {
-    const creditor = await Creditor.findByPk(req.params.id);
+    const creditor = await Creditor.findByPk(req.params.id, {
+      where: { tenant_id: req.tenantId }
+    });
 
     if (!creditor) {
       return res.status(404).json({ error: 'Acreedor no encontrado' });
@@ -196,9 +203,11 @@ router.put('/:id', verifyToken, async (req, res) => {
  *       404:
  *         description: Acreedor no encontrado
  */
-router.delete('/:id', verifyToken, async (req, res) => {
+router.delete('/:id',tenantMiddleware, verifyToken, async (req, res) => {
   try {
-    const creditor = await Creditor.findByPk(req.params.id);
+    const creditor = await Creditor.findByPk(req.params.id, {
+      where: { tenant_id: req.tenantId }
+    });
 
     if (!creditor) {
       return res.status(404).json({ error: 'Acreedor no encontrado' });

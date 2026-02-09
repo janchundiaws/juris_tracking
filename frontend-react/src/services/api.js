@@ -296,8 +296,12 @@ export const creditorsService = {
   },
   
   create: async (creditorData) => {
-    const response = await apiClient.post('/creditors', creditorData);
-    return response.data;
+    try {
+      const response = await apiClient.post('/creditors', creditorData);
+      return response.data;
+    }catch (error) {
+      throw error.response?.data.error;
+    }
   },
   
   update: async (id, creditorData) => {
@@ -430,6 +434,29 @@ export const eventsService = {
 
   delete: async (id) => {
     const response = await apiClient.delete(`/events/${id}`);
+    return response.data;
+  },
+};
+
+// Servicios de tenants
+export const tenantsService = {
+  getCurrent: async () => {
+    const response = await apiClient.get('/tenants/current');
+    return response.data;
+  },
+
+  getById: async (id) => {
+    const response = await apiClient.get(`/tenants/${id}`);
+    return response.data;
+  },
+
+  update: async (id, tenantData) => {
+    const response = await apiClient.put(`/tenants/${id}`, tenantData);
+    return response.data;
+  },
+
+  updateSettings: async (id, settings) => {
+    const response = await apiClient.patch(`/tenants/${id}/settings`, settings);
     return response.data;
   },
 };

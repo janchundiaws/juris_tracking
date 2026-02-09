@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Document = require('../models/Document');
 const { verifyToken } = require('../middleware/auth');
+const { tenantMiddleware } = require('../middleware/tenant');
 
 /**
  * @swagger
@@ -24,11 +25,12 @@ const { verifyToken } = require('../middleware/auth');
  *       500:
  *         description: Error del servidor
  */
-router.get('/', verifyToken, async (req, res) => {
+router.get('/', tenantMiddleware , verifyToken, async (req, res) => {
   try {
     const { judicial_process_id } = req.query;
     const whereClause = {
-      status: 'active'
+      status: 'active',
+      tenant_id: req.tenantId
     };
     
     if (judicial_process_id) {
@@ -70,10 +72,11 @@ router.get('/', verifyToken, async (req, res) => {
  *       500:
  *         description: Error del servidor
  */
-router.get('/:id', verifyToken, async (req, res) => {
+router.get('/:id', tenantMiddleware, verifyToken, async (req, res) => {
   try {
     const document = await Document.findByPk(req.params.id, {
-      attributes: ['id', 'judicial_process_id', 'file_name', 'file_type', 'file_size', 'description', 'status', 'created_at', 'updated_at']
+      attributes: ['id', 'judicial_process_id', 'file_name', 'file_type', 'file_size', 'description', 'status', 'created_at', 'updated_at'],
+      where: { tenant_id: req.tenantId }
     });
     
     if (!document) {
@@ -109,9 +112,11 @@ router.get('/:id', verifyToken, async (req, res) => {
  *       500:
  *         description: Error del servidor
  */
-router.get('/:id/download', verifyToken, async (req, res) => {
+router.get('/:id/download', tenantMiddleware, verifyToken, async (req, res) => {
   try {
-    const document = await Document.findByPk(req.params.id);
+    const document = await Document.findByPk(req.params.id, {
+      where: { tenant_id: req.tenantId }
+    });
     
     if (!document) {
       return res.status(404).json({ error: 'Documento no encontrado' });
@@ -168,7 +173,7 @@ router.get('/:id/download', verifyToken, async (req, res) => {
  *       500:
  *         description: Error del servidor
  */
-router.post('/', verifyToken, async (req, res) => {
+router.post('/', tenantMiddleware, verifyToken, async (req, res) => {
   try {
     const { judicial_process_id, file_name, file_type, file_size, file_data, description } = req.body;
 
@@ -186,12 +191,14 @@ router.post('/', verifyToken, async (req, res) => {
       file_size: file_size || fileBuffer.length,
       file_data: fileBuffer,
       description,
-      status: 'active'
+      status: 'active',
+      tenant_id: req.tenantId
     });
 
     // Retornar sin file_data
     const responseDoc = await Document.findByPk(document.id, {
-      attributes: ['id', 'judicial_process_id', 'file_name', 'file_type', 'file_size', 'description', 'status', 'created_at', 'updated_at']
+      attributes: ['id', 'judicial_process_id', 'file_name', 'file_type', 'file_size', 'description', 'status', 'created_at', 'updated_at'], 
+      where: { tenant_id: req.tenantId }
     });
 
     res.status(201).json(responseDoc);
@@ -235,10 +242,12 @@ router.post('/', verifyToken, async (req, res) => {
  *       500:
  *         description: Error del servidor
  */
-router.put('/:id', verifyToken, async (req, res) => {
+router.put('/:id', tenantMiddleware, verifyToken, async (req, res) => {
   try {
     const { description, status } = req.body;
-    const document = await Document.findByPk(req.params.id);
+    const document = await Document.findByPk(req.params.id, {
+      where: { tenant_id: req.tenantId }
+    });
 
     if (!document) {
       return res.status(404).json({ error: 'Documento no encontrado' });
@@ -252,7 +261,8 @@ router.put('/:id', verifyToken, async (req, res) => {
     await document.update(updateData);
 
     const updatedDoc = await Document.findByPk(req.params.id, {
-      attributes: ['id', 'judicial_process_id', 'file_name', 'file_type', 'file_size', 'description', 'status', 'created_at', 'updated_at']
+      attributes: ['id', 'judicial_process_id', 'file_name', 'file_type', 'file_size', 'description', 'status', 'created_at', 'updated_at'],
+      where: { tenant_id: req.tenantId }
     });
 
     res.json(updatedDoc);
@@ -284,9 +294,11 @@ router.put('/:id', verifyToken, async (req, res) => {
  *       500:
  *         description: Error del servidor
  */
-router.delete('/:id', verifyToken, async (req, res) => {
+router.delete('/:id', tenantMiddleware, verifyToken, async (req, res) => {
   try {
-    const document = await Document.findByPk(req.params.id);
+    const document = await Document.findByPk(req.params.id, {
+      where: { tenant_id: req.tenantId }
+    });
 
     if (!document) {
       return res.status(404).json({ error: 'Documento no encontrado' });
