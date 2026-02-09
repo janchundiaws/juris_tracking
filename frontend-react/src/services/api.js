@@ -263,8 +263,13 @@ export const lawyersService = {
   },
   
   create: async (lawyerData) => {
-    const response = await apiClient.post('/lawyers', lawyerData);
-    return response.data;
+    try {
+      const response = await apiClient.post('/lawyers', lawyerData);
+      return response.data;
+    } catch (error) {
+      throw error.response?.data.error;
+    }
+
   },
   
   update: async (id, lawyerData) => {

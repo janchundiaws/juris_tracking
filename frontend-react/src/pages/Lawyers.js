@@ -118,7 +118,7 @@ const Lawyers = () => {
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (err) {
       console.error('Error al guardar abogado:', err);
-      setError('Error al guardar el abogado. Por favor, intenta de nuevo.');
+      setError('Error al guardar el abogado. Por favor, intenta de nuevo. ' + err);
     } finally {
       setLoading(false);
     }

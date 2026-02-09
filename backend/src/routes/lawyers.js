@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Lawyer = require('../models/Lawyer');
 const { verifyToken } = require('../middleware/auth');
+const tenantMiddleware = require('../middleware/tenant');
 
 /**
  * @swagger
@@ -106,15 +107,20 @@ router.get('/:id', async (req, res) => {
  *       400:
  *         description: Error en los datos proporcionados
  */
-router.post('/', verifyToken, async (req, res) => {
+router.post('/',tenantMiddleware, verifyToken, async (req, res) => {
   try {
     const { first_name, last_name, email, phone, lawyer_type, status, user_id } = req.body;
+    const tenantId = req.tenantId;
 
     if (!first_name || !last_name || !email || !lawyer_type || !status) {
       return res.status(400).json({ error: 'Los campos first_name, last_name, email, lawyer_type y status son requeridos' });
     }
 
-    const lawyerExisting = await Lawyer.findOne({ where: { email } });
+    const lawyerExisting = await Lawyer.findOne({ where: 
+      { email,
+        tenant_id: tenantId 
+       } 
+    });
     if (lawyerExisting) {
       return res.status(400).json({ error: 'El email ya está registrado' });
     }
@@ -126,7 +132,8 @@ router.post('/', verifyToken, async (req, res) => {
       phone: phone || null,
       lawyer_type,
       status,
-      user_id: user_id || null
+      user_id: user_id || null,
+      tenant_id: tenantId   // ← Aquí se asocia al tenant correcto
     });
 
     res.status(201).json({

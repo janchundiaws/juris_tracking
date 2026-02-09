@@ -23,7 +23,7 @@ const tenantMiddleware = async (req, res, next) => {
 
     // Si es localhost o IP, usar como está para desarrollo
     if (host === 'localhost' || host === '127.0.0.1' || /^\d+\.\d+\.\d+\.\d+$/.test(host)) {
-      subdomain = process.env.DEFAULT_TENANT || 'default';
+      subdomain = process.env.DEFAULT_TENANT;
     } else if (parts.length >= 3) {
       // Para dominios como cliente.juristracking.com
       subdomain = parts[0];
@@ -99,7 +99,7 @@ const optionalTenantMiddleware = async (req, res, next) => {
     let subdomain;
 
     if (host === 'localhost' || host === '127.0.0.1' || /^\d+\.\d+\.\d+\.\d+$/.test(host)) {
-      subdomain = process.env.DEFAULT_TENANT || 'default';
+      subdomain = process.env.DEFAULT_TENANT;
     } else if (parts.length >= 3) {
       subdomain = parts[0];
     } else if (parts.length === 2) {

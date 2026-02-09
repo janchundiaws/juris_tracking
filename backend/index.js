@@ -199,11 +199,11 @@ const iniciarServidor = async () => {
     console.log('✅ Asociaciones de modelos inicializadas');
 
     // Sincronizar modelos con la base de datos
-    // await sequelize.sync({ force: true });
-    // console.log('✅ Modelos sincronizados con la base de datos');
+    //await sequelize.sync({ force: true });
+    //console.log('✅ Modelos sincronizados con la base de datos');
 
-    // // Insertar datos iniciales
-    // await insertDataInicial();
+    //// Insertar datos iniciales
+    //await insertDataInicial();
 
     // Iniciar consumer de RabbitMQ
     await startUserConsumer();
