@@ -2,63 +2,43 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import { useAuth } from '../context/AuthContext';
+import { eventsService } from '../services/api';
 import '../styles/Dashboard.css';
 import '../styles/Calendar.css';
 
 const Calendar = () => {
   const { user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 0, 30)); // 30 de enero de 2026
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [showDateEvents, setShowDateEvents] = useState(false);
   const [formData, setFormData] = useState({
-    title: '',
     description: '',
-    eventDate: '',
-    startTime: '',
-    endTime: '',
-    eventType: 'audiencia',
-    caseId: ''
+    event_date: '',
+    location: ''
   });
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    // Datos de ejemplo
-    const mockEvents = [
-      {
-        id: 1,
-        title: 'Audiencia - Caso CASO-2026-001',
-        description: 'Audiencia de primera instancia',
-        eventDate: '2026-02-15',
-        startTime: '09:00',
-        endTime: '10:30',
-        eventType: 'audiencia',
-        caseId: 'CASO-2026-001'
-      },
-      {
-        id: 2,
-        title: 'Presentación de documentos',
-        description: 'Entrega de pruebas para CASO-2026-002',
-        eventDate: '2026-02-10',
-        startTime: '14:00',
-        endTime: '15:00',
-        eventType: 'documento',
-        caseId: 'CASO-2026-002'
-      },
-      {
-        id: 3,
-        title: 'Audiencia de apelación',
-        description: 'Revisión de sentencia',
-        eventDate: '2026-02-20',
-        startTime: '11:00',
-        endTime: '12:30',
-        eventType: 'audiencia',
-        caseId: 'CASO-2026-003'
-      }
-    ];
-    setEvents(mockEvents);
+    loadEvents();
   }, []);
+
+  const loadEvents = async () => {
+    try {
+      setLoading(true);
+      const data = await eventsService.getAll();
+      setEvents(data);
+    } catch (error) {
+      console.error('Error al cargar eventos:', error);
+      setErrors({ general: 'Error al cargar los eventos' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getDaysInMonth = (date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -77,7 +57,12 @@ const Calendar = () => {
   };
 
   const handleToday = () => {
-    setCurrentDate(new Date(2026, 0, 30));
+    setCurrentDate(new Date());
+  };
+
+  const handleDateClick = (date) => {
+    setSelectedDate(date);
+    setShowDateEvents(true);
   };
 
   const handleChange = (e) => {
@@ -94,30 +79,18 @@ const Calendar = () => {
   const validateForm = () => {
     const newErrors = {};
     
-    if (!formData.title.trim()) {
-      newErrors.title = 'El título es requerido';
+    if (!formData.description.trim()) {
+      newErrors.description = 'La descripción es requerida';
     }
     
-    if (!formData.eventDate) {
-      newErrors.eventDate = 'La fecha es requerida';
-    }
-
-    if (!formData.startTime) {
-      newErrors.startTime = 'La hora de inicio es requerida';
-    }
-
-    if (!formData.endTime) {
-      newErrors.endTime = 'La hora de fin es requerida';
-    }
-
-    if (formData.startTime && formData.endTime && formData.startTime >= formData.endTime) {
-      newErrors.endTime = 'La hora de fin debe ser posterior a la de inicio';
+    if (!formData.event_date) {
+      newErrors.event_date = 'La fecha y hora son requeridas';
     }
     
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     const newErrors = validateForm();
@@ -126,33 +99,33 @@ const Calendar = () => {
       return;
     }
     
-    if (editingId) {
-      setEvents(events.map(e => 
-        e.id === editingId 
-          ? { ...e, ...formData }
-          : e
-      ));
-      setEditingId(null);
-    } else {
-      const newEvent = {
-        id: Math.max(...events.map(e => e.id), 0) + 1,
-        ...formData
+    try {
+      const eventData = {
+        user_id: user.id,
+        event_date: formData.event_date,
+        description: formData.description,
+        location: formData.location || null
       };
-      setEvents([...events, newEvent]);
+
+      if (editingId) {
+        await eventsService.update(editingId, eventData);
+      } else {
+        await eventsService.create(eventData);
+      }
+      
+      await loadEvents();
+      resetForm();
+    } catch (error) {
+      console.error('Error al guardar evento:', error);
+      setErrors({ general: error.response?.data?.error || 'Error al guardar el evento' });
     }
-    
-    resetForm();
   };
 
   const resetForm = () => {
     setFormData({
-      title: '',
       description: '',
-      eventDate: '',
-      startTime: '',
-      endTime: '',
-      eventType: 'audiencia',
-      caseId: ''
+      event_date: '',
+      location: ''
     });
     setErrors({});
     setIsCreating(false);
@@ -160,20 +133,35 @@ const Calendar = () => {
   };
 
   const handleEdit = (event) => {
-    setFormData(event);
+    setFormData({
+      description: event.description,
+      event_date: event.event_date,
+      location: event.location || ''
+    });
     setEditingId(event.id);
     setIsCreating(true);
+    setShowDateEvents(false);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('¿Estás seguro de que deseas eliminar este evento?')) {
-      setEvents(events.filter(e => e.id !== id));
+      try {
+        await eventsService.delete(id);
+        await loadEvents();
+        setShowDateEvents(false);
+      } catch (error) {
+        console.error('Error al eliminar evento:', error);
+        alert('Error al eliminar el evento');
+      }
     }
   };
 
   const getEventsForDate = (date) => {
     const dateString = date.toISOString().split('T')[0];
-    return events.filter(e => e.eventDate === dateString);
+    return events.filter(e => {
+      const eventDate = new Date(e.event_date).toISOString().split('T')[0];
+      return eventDate === dateString;
+    });
   };
 
   const renderCalendarDays = () => {
@@ -190,17 +178,19 @@ const Calendar = () => {
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
       const dateEvents = getEventsForDate(date);
-      const isToday = date.toDateString() === new Date(2026, 0, 30).toDateString();
+      const isToday = date.toDateString() === new Date().toDateString();
 
       days.push(
         <div 
           key={day} 
           className={`calendar-day ${isToday ? 'today' : ''} ${dateEvents.length > 0 ? 'has-events' : ''}`}
+          onClick={() => handleDateClick(date)}
+          style={{ cursor: 'pointer' }}
         >
           <div className="day-number">{day}</div>
           <div className="day-events">
             {dateEvents.slice(0, 2).map(event => (
-              <div key={event.id} className={`event-dot type-${event.eventType}`} title={event.title}></div>
+              <div key={event.id} className="event-dot" title={event.description}></div>
             ))}
             {dateEvents.length > 2 && <div className="event-more">+{dateEvents.length - 2}</div>}
           </div>
@@ -212,10 +202,11 @@ const Calendar = () => {
   };
 
   const monthName = currentDate.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
+  const today = new Date();
   const upcomingEvents = events
-    .filter(e => new Date(e.eventDate) >= new Date(2026, 0, 30))
-    .sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate))
-    .slice(0, 5);
+    .filter(e => new Date(e.event_date) >= today)
+    .sort((a, b) => new Date(a.event_date) - new Date(b.event_date))
+    .slice(0, 10);
 
   return (
     <div className="dashboard-layout">
@@ -252,22 +243,32 @@ const Calendar = () => {
 
               {/* Próximos Eventos */}
               <div className="upcoming-events">
-                <h3>Próximos Eventos</h3>
-                {upcomingEvents.length === 0 ? (
+                <h3>Próximos 10 Eventos</h3>
+                {loading ? (
+                  <p className="no-events">Cargando eventos...</p>
+                ) : upcomingEvents.length === 0 ? (
                   <p className="no-events">No hay eventos próximos</p>
                 ) : (
                   <div className="events-list">
                     {upcomingEvents.map(event => (
-                      <div key={event.id} className={`event-item type-${event.eventType}`}>
+                      <div key={event.id} className="event-item">
                         <div className="event-date">
-                          {new Date(event.eventDate).toLocaleDateString('es-ES', { 
+                          {new Date(event.event_date).toLocaleDateString('es-ES', { 
                             day: 'numeric', 
                             month: 'short' 
                           })}
                         </div>
                         <div className="event-details">
-                          <div className="event-title">{event.title}</div>
-                          <div className="event-time">{event.startTime} - {event.endTime}</div>
+                          <div className="event-title">{event.description}</div>
+                          <div className="event-time">
+                            {new Date(event.event_date).toLocaleTimeString('es-ES', { 
+                              hour: '2-digit', 
+                              minute: '2-digit' 
+                            })}
+                          </div>
+                          {event.location && (
+                            <div className="event-location">📍 {event.location}</div>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -279,143 +280,34 @@ const Calendar = () => {
             {/* Formulario de Eventos */}
             <div className="events-section">
               <div className="section-header">
-                <h2>Eventos</h2>
-                {!isCreating && (
-                  <button className="btn-primary" onClick={() => setIsCreating(true)}>
-                    ➕ Nuevo Evento
-                  </button>
-                )}
+                <h2>Todos los Eventos</h2>
+                <button className="btn-primary" onClick={() => setIsCreating(true)}>
+                  ➕ Nuevo Evento
+                </button>
               </div>
 
-              {isCreating && (
-                <div className="event-form-card">
-                  <div className="form-card-header">
-                    <h3>{editingId ? 'Editar Evento' : 'Crear Nuevo Evento'}</h3>
-                    <button className="close-btn" onClick={resetForm}>✕</button>
-                  </div>
-
-                  <form onSubmit={handleSubmit} className="event-form">
-                    {errors.general && (
-                      <div className="error-message">{errors.general}</div>
-                    )}
-
-                    <div className="form-group">
-                      <label htmlFor="title">Título del Evento *</label>
-                      <input
-                        type="text"
-                        id="title"
-                        name="title"
-                        value={formData.title}
-                        onChange={handleChange}
-                        placeholder="Audiencia..."
-                      />
-                      {errors.title && <span className="error-text">{errors.title}</span>}
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="description">Descripción</label>
-                      <textarea
-                        id="description"
-                        name="description"
-                        value={formData.description}
-                        onChange={handleChange}
-                        placeholder="Detalles del evento..."
-                        rows="3"
-                      />
-                    </div>
-
-                    <div className="form-row">
-                      <div className="form-group">
-                        <label htmlFor="eventDate">Fecha *</label>
-                        <input
-                          type="date"
-                          id="eventDate"
-                          name="eventDate"
-                          value={formData.eventDate}
-                          onChange={handleChange}
-                        />
-                        {errors.eventDate && <span className="error-text">{errors.eventDate}</span>}
-                      </div>
-
-                      <div className="form-group">
-                        <label htmlFor="eventType">Tipo de Evento</label>
-                        <select
-                          id="eventType"
-                          name="eventType"
-                          value={formData.eventType}
-                          onChange={handleChange}
-                        >
-                          <option value="audiencia">Audiencia</option>
-                          <option value="documento">Documento</option>
-                          <option value="reunion">Reunión</option>
-                          <option value="otro">Otro</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="form-row">
-                      <div className="form-group">
-                        <label htmlFor="startTime">Hora de Inicio *</label>
-                        <input
-                          type="time"
-                          id="startTime"
-                          name="startTime"
-                          value={formData.startTime}
-                          onChange={handleChange}
-                        />
-                        {errors.startTime && <span className="error-text">{errors.startTime}</span>}
-                      </div>
-
-                      <div className="form-group">
-                        <label htmlFor="endTime">Hora de Fin *</label>
-                        <input
-                          type="time"
-                          id="endTime"
-                          name="endTime"
-                          value={formData.endTime}
-                          onChange={handleChange}
-                        />
-                        {errors.endTime && <span className="error-text">{errors.endTime}</span>}
-                      </div>
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="caseId">ID del Caso (Opcional)</label>
-                      <input
-                        type="text"
-                        id="caseId"
-                        name="caseId"
-                        value={formData.caseId}
-                        onChange={handleChange}
-                        placeholder="CASO-2026-001"
-                      />
-                    </div>
-
-                    <div className="form-actions">
-                      <button type="submit" className="btn-primary">
-                        {editingId ? 'Actualizar Evento' : 'Crear Evento'}
-                      </button>
-                      <button type="button" className="btn-secondary" onClick={resetForm}>
-                        Cancelar
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              )}
+              </div>
 
               <div className="events-grid">
-                {events.length === 0 ? (
+                {loading ? (
+                  <div className="empty-state">
+                    <p>Cargando eventos...</p>
+                  </div>
+                ) : events.length === 0 ? (
                   <div className="empty-state">
                     <p>No hay eventos registrados</p>
+                    <button className="btn-primary" onClick={() => setIsCreating(true)}>
+                      Crear primer evento
+                    </button>
                   </div>
                 ) : (
                   <div className="events-list-detail">
                     {events
-                      .sort((a, b) => new Date(`${a.eventDate}T${a.startTime}`) - new Date(`${b.eventDate}T${b.startTime}`))
+                      .sort((a, b) => new Date(a.event_date) - new Date(b.event_date))
                       .map(event => (
-                        <div key={event.id} className={`event-card type-${event.eventType}`}>
+                        <div key={event.id} className="event-card">
                           <div className="event-card-header">
-                            <h4>{event.title}</h4>
+                            <h4>{event.description}</h4>
                             <div className="event-actions">
                               <button 
                                 className="btn-icon"
@@ -435,29 +327,27 @@ const Calendar = () => {
                           </div>
                           <div className="event-card-body">
                             <div className="event-info">
-                              <span className="label">Fecha:</span>
-                              <span>{new Date(event.eventDate).toLocaleDateString('es-ES')}</span>
-                            </div>
-                            <div className="event-info">
-                              <span className="label">Hora:</span>
-                              <span>{event.startTime} - {event.endTime}</span>
-                            </div>
-                            <div className="event-info">
-                              <span className="label">Tipo:</span>
-                              <span className={`type-badge type-${event.eventType}`}>
-                                {event.eventType.charAt(0).toUpperCase() + event.eventType.slice(1)}
+                              <span className="label">📅</span>
+                              <span>
+                                {new Date(event.event_date).toLocaleString('es-ES', {
+                                  day: 'numeric',
+                                  month: 'long',
+                                  year: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
                               </span>
                             </div>
-                            {event.description && (
+                            {event.location && (
                               <div className="event-info">
-                                <span className="label">Descripción:</span>
-                                <span className="description">{event.description}</span>
+                                <span className="label">📍</span>
+                                <span>{event.location}</span>
                               </div>
                             )}
-                            {event.caseId && (
+                            {event.user && (
                               <div className="event-info">
-                                <span className="label">Caso:</span>
-                                <span>{event.caseId}</span>
+                                <span className="label">👤</span>
+                                <span>{event.user.first_name} {event.user.last_name}</span>
                               </div>
                             )}
                           </div>
@@ -468,9 +358,138 @@ const Calendar = () => {
               </div>
             </div>
           </div>
+
+          {/* Modal de Crear/Editar Evento */}
+          {isCreating && (
+            <div className="modal-overlay" onClick={resetForm}>
+              <div className="modal-content modal-form" onClick={(e) => e.stopPropagation()}>
+                <div className="modal-header">
+                  <h3>{editingId ? '✏️ Editar Evento' : '➕ Crear Nuevo Evento'}</h3>
+                  <button className="close-btn" onClick={resetForm}>✕</button>
+                </div>
+
+                <form onSubmit={handleSubmit} className="event-form modal-form-body">
+                  {errors.general && (
+                    <div className="error-message">{errors.general}</div>
+                  )}
+
+                  <div className="form-group">
+                    <label htmlFor="description">📝 Descripción del Evento *</label>
+                    <textarea
+                      id="description"
+                      name="description"
+                      value={formData.description}
+                      onChange={handleChange}
+                      placeholder="Ej: Reunión con el cliente, Audiencia judicial..."
+                      rows="4"
+                    />
+                    {errors.description && <span className="error-text">{errors.description}</span>}
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="event_date">📅 Fecha y Hora *</label>
+                    <input
+                      type="datetime-local"
+                      id="event_date"
+                      name="event_date"
+                      value={formData.event_date}
+                      onChange={handleChange}
+                    />
+                    {errors.event_date && <span className="error-text">{errors.event_date}</span>}
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="location">📍 Lugar del Evento</label>
+                    <input
+                      type="text"
+                      id="location"
+                      name="location"
+                      value={formData.location}
+                      onChange={handleChange}
+                      placeholder="Ej: Sala de Audiencias #3, Oficina Principal..."
+                    />
+                  </div>
+
+                  <div className="form-actions">
+                    <button type="submit" className="btn-primary">
+                      {editingId ? 'Actualizar Evento' : 'Crear Evento'}
+                    </button>
+                    <button type="button" className="btn-secondary" onClick={resetForm}>
+                      Cancelar
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Modal de Eventos por Fecha */}
+          {showDateEvents && selectedDate && (
+            <div className="modal-overlay" onClick={() => setShowDateEvents(false)}>
+              <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <div className="modal-header">
+                  <h3>
+                    Eventos del {selectedDate.toLocaleDateString('es-ES', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    })}
+                  </h3>
+                  <button className="close-btn" onClick={() => setShowDateEvents(false)}>✕</button>
+                </div>
+                <div className="modal-body">
+                  {getEventsForDate(selectedDate).length === 0 ? (
+                    <p className="no-events">No hay eventos para esta fecha</p>
+                  ) : (
+                    <div className="date-events-list">
+                      {getEventsForDate(selectedDate).map(event => (
+                        <div key={event.id} className="event-card">
+                          <div className="event-card-header">
+                            <h4>{event.description}</h4>
+                            <div className="event-actions">
+                              <button 
+                                className="btn-icon"
+                                onClick={() => handleEdit(event)}
+                                title="Editar"
+                              >
+                                ✏️
+                              </button>
+                              <button 
+                                className="btn-icon btn-delete"
+                                onClick={() => handleDelete(event.id)}
+                                title="Eliminar"
+                              >
+                                🗑️
+                              </button>
+                            </div>
+                          </div>
+                          <div className="event-card-body">
+                            <div className="event-info">
+                              <span className="label">Hora:</span>
+                              <span>
+                                {new Date(event.event_date).toLocaleTimeString('es-ES', {
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </span>
+                            </div>
+                            {event.location && (
+                              <div className="event-info">
+                                <span className="label">Lugar:</span>
+                                <span>{event.location}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
-    </div>
   );
 };
 
