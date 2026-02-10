@@ -456,8 +456,12 @@ export const tenantsService = {
   },
 
   create: async (tenantData) => {
-    const response = await apiClient.post('/tenants', tenantData);
-    return response.data;
+    try{
+      const response = await apiClient.post('/tenants', tenantData);
+      return response.data;
+    }catch (error) {
+      throw error.response?.data.error;
+    }
   },
 
   update: async (id, tenantData) => {
