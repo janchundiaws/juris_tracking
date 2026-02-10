@@ -239,7 +239,11 @@ const Calendar = () => {
                 </div>
 
                 <button className="btn-today" onClick={handleToday}>Hoy</button>
+                <button className="btn-primary" onClick={() => setIsCreating(true)}>
+                  ➕ Nuevo Evento
+                </button>
               </div>
+            </div>
 
               {/* Próximos Eventos */}
               <div className="upcoming-events">
@@ -275,18 +279,6 @@ const Calendar = () => {
                   </div>
                 )}
               </div>
-            </div>
-
-            {/* Formulario de Eventos */}
-            <div className="events-section">
-              <div className="section-header">
-                <h2>Todos los Eventos</h2>
-                <button className="btn-primary" onClick={() => setIsCreating(true)}>
-                  ➕ Nuevo Evento
-                </button>
-              </div>
-
-              </div>
 
             </div>
           </div>
@@ -296,7 +288,7 @@ const Calendar = () => {
             <div className="modal-overlay" onClick={resetForm}>
               <div className="modal-content modal-form" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
-                  <h3>{editingId ? '✏️ Editar Evento' : '➕ Crear Nuevo Evento'}</h3>
+                  <h3>{editingId ? '✏️ Editar Evento' : 'Crear Nuevo Evento'}</h3>
                   <button className="close-btn" onClick={resetForm}>✕</button>
                 </div>
 

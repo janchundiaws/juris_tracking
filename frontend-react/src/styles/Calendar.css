@@ -59,7 +59,7 @@
   border: none;
   width: 36px;
   height: 36px;
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
   transition: all 0.3s;
@@ -182,7 +182,7 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 8px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s;
@@ -243,10 +243,6 @@
   transition: all 0.3s;
   cursor: pointer;
 }
-  background: #f7fafc;
-  border-radius: 8px;
-  border-left: 4px solid;
-  cursor: pointer;
 .event-item:hover {
   background: linear-gradient(135deg, #e3e8ff 0%, #d4d9f7 100%);
   transform: translateX(6px);

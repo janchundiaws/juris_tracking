@@ -699,12 +699,7 @@ const CaseDetails = () => {
                   <div className="section-header">
                     <h3 className="section-title">Documentos Adjuntos</h3>
                     <button className="btn-upload-doc" onClick={() => setShowUploadModal(true)}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="17 8 12 3 7 8"></polyline>
-                        <line x1="12" y1="3" x2="12" y2="15"></line>
-                      </svg>
-                      <span>Subir Documento</span>
+                      <span>➕ Subir Documento</span>
                     </button>
                   </div>
                   
@@ -795,18 +790,18 @@ const CaseDetails = () => {
                       </div>
                       <div className="modal-footer">
                         <button 
-                          className="btn-secondary"
-                          onClick={() => setShowUploadModal(false)}
-                          disabled={uploadingFile}
-                        >
-                          Cancelar
-                        </button>
-                        <button 
                           className="btn-primary"
                           onClick={handleUploadDocument}
                           disabled={!uploadFile || uploadingFile}
                         >
                           {uploadingFile ? 'Subiendo...' : 'Subir Documento'}
+                        </button>
+                        <button 
+                          className="btn-secondary"
+                          onClick={() => setShowUploadModal(false)}
+                          disabled={uploadingFile}
+                        >
+                          Cancelar
                         </button>
                       </div>
                     </div>
@@ -858,10 +853,7 @@ const CaseDetails = () => {
                       className="btn-upload-doc"
                       onClick={handleOpenActivityModal}
                     >
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M12 5v14M5 12h14"></path>
-                      </svg>
-                      <span>Nueva Actividad</span>
+                      <span>➕ Nueva Actividad</span>
                     </button>
                   </div>
                   
@@ -1124,18 +1116,18 @@ const CaseDetails = () => {
               </div>
               <div className="modal-footer">
                 <button 
-                  className="btn-secondary"
-                  onClick={() => setShowActivityModal(false)}
-                  disabled={creatingActivity}
-                >
-                  Cancelar
-                </button>
-                <button 
                   className="btn-primary"
                   onClick={handleSaveActivity}
                   disabled={creatingActivity}
                 >
                   {creatingActivity ? (editingActivity ? 'Actualizando...' : 'Creando...') : (editingActivity ? 'Actualizar Actividad' : 'Crear Actividad')}
+                </button>
+                <button 
+                  className="btn-secondary"
+                  onClick={() => setShowActivityModal(false)}
+                  disabled={creatingActivity}
+                >
+                  Cancelar
                 </button>
               </div>
             </div>

@@ -26,10 +26,22 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px;
-  background: #f7fafc;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 28px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 20px 20px 0 0;
 }
+
+
+.form-card-header h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/*FIN */
 
 /* Modal de Formulario */
 .form-modal-overlay {
