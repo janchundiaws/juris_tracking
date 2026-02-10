@@ -752,12 +752,12 @@ const CaseDetails = () => {
 
                 {/* Modal de Subir Documento */}
                 {showUploadModal && (
-                  <div className="modal-overlay" onClick={() => !uploadingFile && setShowUploadModal(false)}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                      <div className="modal-header">
+                  <div className="form-modal-overlay" onClick={() => !uploadingFile && setShowUploadModal(false)}>
+                    <div className="form-modal-content" onClick={(e) => e.stopPropagation()}>
+                      <div className="form-card-header">
                         <h2>Subir Documento</h2>
                         <button 
-                          className="modal-close"
+                          className="close-btn"
                           onClick={() => setShowUploadModal(false)}
                           disabled={uploadingFile}
                         >
@@ -1023,12 +1023,12 @@ const CaseDetails = () => {
 
         {/* Modal de Nueva Actividad */}
         {showActivityModal && (
-          <div className="modal-overlay" onClick={() => setShowActivityModal(false)}>
-            <div className="modal-content activity-modal" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-header">
+          <div className="form-modal-overlay" onClick={() => setShowActivityModal(false)}>
+            <div className="form-modal-content activity-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="form-card-header">
                 <h2>{editingActivity ? 'Editar Actividad' : 'Nueva Actividad'}</h2>
                 <button 
-                  className="modal-close"
+                  className="close-btn"
                   onClick={() => setShowActivityModal(false)}
                 >
                   ✕

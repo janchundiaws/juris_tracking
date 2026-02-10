@@ -469,15 +469,6 @@ export const tenantsService = {
     return response.data;
   },
 
-  updateSettings: async (id, settings) => {
-    const response = await apiClient.patch(`/tenants/${id}/settings`, settings);
-    return response.data;
-  },
-
-  delete: async (id) => {
-    const response = await apiClient.delete(`/tenants/${id}`);
-    return response.data;
-  },
 };
 
 export default apiClient;

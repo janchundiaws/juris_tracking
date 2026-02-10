@@ -285,10 +285,10 @@ const Calendar = () => {
 
           {/* Modal de Crear/Editar Evento */}
           {isCreating && (
-            <div className="modal-overlay" onClick={resetForm}>
-              <div className="modal-content modal-form" onClick={(e) => e.stopPropagation()}>
-                <div className="modal-header">
-                  <h3>{editingId ? '✏️ Editar Evento' : 'Crear Nuevo Evento'}</h3>
+            <div className="form-modal-overlay" onClick={resetForm}>
+              <div className="form-modal-content modal-form" onClick={(e) => e.stopPropagation()}>
+                <div className="form-card-header">
+                  <h2>{editingId ? '✏️ Editar Evento' : 'Crear Nuevo Evento'}</h2>
                   <button className="close-btn" onClick={resetForm}>✕</button>
                 </div>
 
@@ -349,16 +349,16 @@ const Calendar = () => {
 
           {/* Modal de Eventos por Fecha */}
           {showDateEvents && selectedDate && (
-            <div className="modal-overlay" onClick={() => setShowDateEvents(false)}>
-              <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <div className="modal-header">
-                  <h3>
+            <div className="form-modal-overlay" onClick={() => setShowDateEvents(false)}>
+              <div className="form-modal-content" onClick={(e) => e.stopPropagation()}>
+                <div className="form-card-header">
+                  <h2>
                     Eventos del {selectedDate.toLocaleDateString('es-ES', {
                       day: 'numeric',
                       month: 'long',
                       year: 'numeric'
                     })}
-                  </h3>
+                  </h2>
                   <button className="close-btn" onClick={() => setShowDateEvents(false)}>✕</button>
                 </div>
                 <div className="modal-body">

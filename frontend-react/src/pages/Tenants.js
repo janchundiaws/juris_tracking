@@ -273,7 +273,8 @@ const Tenants = () => {
                 <div className="form-modal-overlay">
                     <div className="form-modal-content">
                         <div className="form-card-header">
-                        <h2>{editingId ? 'Editar Tenant' : 'Crear Nuevo Tenant'}</h2>
+                            <h2>{editingId ? 'Editar Tenant' : 'Crear Nuevo Tenant'}</h2>
+                            <button className="close-btn" onClick={handleCancel}>✕</button>
                         </div>
                         
                         <form onSubmit={handleSubmit} className="tenant-form">
@@ -409,19 +410,19 @@ const Tenants = () => {
 
                         <div className="form-actions">
                             <button 
-                            type="button" 
-                            className="btn-secondary"
-                            onClick={handleCancel}
-                            disabled={loading}
-                            >
-                            Cancelar
+                                type="submit" 
+                                className="btn-primary"
+                                disabled={loading}
+                                >
+                                {loading ? 'Guardando...' : editingId ? 'Actualizar' : 'Crear Tenant'}
                             </button>
                             <button 
-                            type="submit" 
-                            className="btn-primary"
-                            disabled={loading}
-                            >
-                            {loading ? 'Guardando...' : editingId ? 'Actualizar' : 'Crear Tenant'}
+                                type="button" 
+                                className="btn-secondary"
+                                onClick={handleCancel}
+                                disabled={loading}
+                                >
+                                Cancelar
                             </button>
                         </div>
                         </form>

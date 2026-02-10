@@ -10,15 +10,13 @@ const { verifyToken } = require('../middleware/auth');
  *     summary: Obtener información del tenant actual
  *     tags:
  *       - Tenants
- *     security:
- *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: Información del tenant
  *       404:
  *         description: Tenant no encontrado
  */
-router.get('/current', verifyToken, async (req, res) => {
+router.get('/current', async (req, res) => {
   try {
     if (!req.tenant) {
       return res.status(404).json({ error: 'Tenant no encontrado' });
@@ -243,6 +241,12 @@ router.get('/:id', verifyToken, async (req, res) => {
  *       - Tenants
  *     security:
  *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -260,30 +264,33 @@ router.get('/:id', verifyToken, async (req, res) => {
  *       404:
  *         description: Tenant no encontrado
  */
-router.put('/', verifyToken, async (req, res) => {
+router.put('/:id', verifyToken, async (req, res) => {
   try {
+
     if (!req.tenant) {
       return res.status(404).json({ error: 'Tenant no encontrado' });
     }
 
-    const { name, settings } = req.body;
+    const tenant = await Tenant.findByPk(req.params.id);
 
-    await req.tenant.update({
-      name: name || req.tenant.name,
-      settings: settings !== undefined ? settings : req.tenant.settings
-    });
+    if (!tenant) {
+      return res.status(404).json({ error: 'Tenant no encontrado' });
+    }
+
+    await tenant.update(req.body);
 
     res.json({
       message: 'Tenant actualizado exitosamente',
       tenant: {
-        id: req.tenant.id,
-        name: req.tenant.name,
-        subdomain: req.tenant.subdomain,
-        domain: req.tenant.domain,
-        status: req.tenant.status,
-        settings: req.tenant.settings
+        id: req.id,
+        name: req.name,
+        subdomain: req.subdomain,
+        domain: req.domain,
+        status: req.status,
+        settings: req.settings
       }
     });
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

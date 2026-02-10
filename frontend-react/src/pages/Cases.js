@@ -380,7 +380,7 @@ const Cases = () => {
           <div className="form-modal-overlay">
             <div className="form-modal-content">
               <div className="form-card-header">
-                <h3>{editingId ? 'Editar Caso' : 'Crear Nuevo Caso'}</h3>
+                <h2>{editingId ? 'Editar Caso' : 'Crear Nuevo Caso'}</h2>
                 <button className="close-btn" onClick={resetForm}>✕</button>
               </div>
 
