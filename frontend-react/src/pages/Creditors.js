@@ -567,70 +567,25 @@ const Creditors = () => {
 
         {/* Modal de confirmación de eliminación */}
         {deleteModal.show && (
-          <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000
-          }}>
-            <div style={{
-              backgroundColor: '#fff',
-              borderRadius: '12px',
-              padding: '30px',
-              maxWidth: '400px',
-              width: '90%',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-              textAlign: 'center'
-            }}>
-              <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</div>
-              <h2 style={{ color: '#1a1a1a', marginBottom: '8px' }}>Confirmar eliminación</h2>
-              <p style={{ color: '#666', marginBottom: '24px' }}>
+          <div className="delete-modal-overlay">
+            <div className="delete-modal-content">
+              <div className="delete-modal-icon">⚠️</div>
+              <h2>Confirmar eliminación</h2>
+              <p>
                 ¿Está seguro de que desea eliminar el acreedor <strong>{deleteModal.name}</strong>? Esta acción no se puede deshacer.
               </p>
-              <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+              <div className="delete-modal-actions">
                 <button 
                   onClick={cancelDelete}
                   disabled={loading}
-                  style={{
-                    padding: '10px 24px',
-                    backgroundColor: '#666',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: loading ? 'not-allowed' : 'pointer',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    transition: 'background-color 0.2s',
-                    opacity: loading ? 0.6 : 1
-                  }}
-                  onMouseOver={(e) => !loading && (e.target.style.backgroundColor = '#555')}
-                  onMouseOut={(e) => e.target.style.backgroundColor = '#666'}
+                  className="delete-modal-cancel"
                 >
                   Cancelar
                 </button>
                 <button 
                   onClick={confirmDelete}
                   disabled={loading}
-                  style={{
-                    padding: '10px 24px',
-                    backgroundColor: '#ff4444',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: loading ? 'not-allowed' : 'pointer',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    transition: 'background-color 0.2s',
-                    opacity: loading ? 0.6 : 1
-                  }}
-                  onMouseOver={(e) => !loading && (e.target.style.backgroundColor = '#cc0000')}
-                  onMouseOut={(e) => e.target.style.backgroundColor = '#ff4444'}
+                  className="delete-modal-confirm"
                 >
                   {loading ? 'Eliminando...' : 'Sí, Eliminar'}
                 </button>
@@ -641,148 +596,51 @@ const Creditors = () => {
 
         {/* Modal de detalles */}
         {detailsModal.show && detailsModal.creditor && (
-          <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000
-          }}>
-            <div style={{
-              backgroundColor: '#fff',
-              borderRadius: '12px',
-              padding: '30px',
-              maxWidth: '500px',
-              width: '90%',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-              maxHeight: '80vh',
-              overflowY: 'auto'
-            }}>
-              <div style={{ textAlign: 'center', marginBottom: '25px' }}>
-                <h2 style={{ color: '#1a1a1a', marginBottom: '10px' }}>Detalles del Acreedor</h2>
+          <div className="details-modal-overlay">
+            <div className="details-modal-content">
+              <div className="details-modal-header">
+                <h2>Detalles del Acreedor</h2>
               </div>
 
-              <div style={{ 
-                backgroundColor: '#f5f5f5',
-                borderRadius: '8px',
-                padding: '20px',
-                marginBottom: '20px'
-              }}>
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ 
-                    display: 'block',
-                    fontSize: '12px',
-                    color: '#666',
-                    fontWeight: '600',
-                    marginBottom: '6px',
-                    textTransform: 'uppercase'
-                  }}>Nombre</label>
-                  <p style={{ 
-                    fontSize: '16px', 
-                    color: '#1a1a1a', 
-                    fontWeight: '500',
-                    margin: 0
-                  }}>{detailsModal.creditor.name}</p>
+              <div className="details-info-container">
+                <div className="details-info-item">
+                  <label className="details-info-label">Nombre</label>
+                  <p className="details-info-value">{detailsModal.creditor.name}</p>
                 </div>
 
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ 
-                    display: 'block',
-                    fontSize: '12px',
-                    color: '#666',
-                    fontWeight: '600',
-                    marginBottom: '6px',
-                    textTransform: 'uppercase'
-                  }}>RUC</label>
-                  <p style={{ 
-                    fontSize: '14px', 
-                    color: '#1a1a1a', 
-                    margin: 0
-                  }}>{detailsModal.creditor.ruc}</p>
+                <div className="details-info-item">
+                  <label className="details-info-label">RUC</label>
+                  <p className="details-info-value-normal">{detailsModal.creditor.ruc}</p>
                 </div>
 
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ 
-                    display: 'block',
-                    fontSize: '12px',
-                    color: '#666',
-                    fontWeight: '600',
-                    marginBottom: '6px',
-                    textTransform: 'uppercase'
-                  }}>Estado</label>
-                  <p style={{ margin: 0 }}>
-                    <span style={{
-                      display: 'inline-block',
-                      padding: '6px 12px',
-                      borderRadius: '4px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      backgroundColor: detailsModal.creditor.status === 'active' ? '#d4edda' : '#f8d7da',
-                      color: detailsModal.creditor.status === 'active' ? '#155724' : '#721c24'
-                    }}>
+                <div className="details-info-item">
+                  <label className="details-info-label">Estado</label>
+                  <p>
+                    <span className={`details-status-badge ${detailsModal.creditor.status}`}>
                       {getStatusLabel(detailsModal.creditor.status)}
                     </span>
                   </p>
                 </div>
 
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ 
-                    display: 'block',
-                    fontSize: '12px',
-                    color: '#666',
-                    fontWeight: '600',
-                    marginBottom: '6px',
-                    textTransform: 'uppercase'
-                  }}>Creado</label>
-                  <p style={{ 
-                    fontSize: '13px', 
-                    color: '#999',
-                    margin: 0
-                  }}>{new Date(detailsModal.creditor.created_at).toLocaleString('es-ES')}</p>
+                <div className="details-info-item">
+                  <label className="details-info-label">Creado</label>
+                  <p className="details-info-value-small">
+                    {new Date(detailsModal.creditor.created_at).toLocaleString('es-ES')}
+                  </p>
                 </div>
 
-                <div>
-                  <label style={{ 
-                    display: 'block',
-                    fontSize: '12px',
-                    color: '#666',
-                    fontWeight: '600',
-                    marginBottom: '6px',
-                    textTransform: 'uppercase'
-                  }}>Actualizado</label>
-                  <p style={{ 
-                    fontSize: '13px', 
-                    color: '#999',
-                    margin: 0
-                  }}>{new Date(detailsModal.creditor.updated_at).toLocaleString('es-ES')}</p>
+                <div className="details-info-item">
+                  <label className="details-info-label">Actualizado</label>
+                  <p className="details-info-value-small">
+                    {new Date(detailsModal.creditor.updated_at).toLocaleString('es-ES')}
+                  </p>
                 </div>
               </div>
 
-              <div style={{ 
-                display: 'flex', 
-                gap: '10px', 
-                justifyContent: 'flex-end'
-              }}>
+              <div className="details-modal-footer">
                 <button 
                   onClick={closeDetailsModal}
-                  style={{
-                    padding: '10px 24px',
-                    backgroundColor: '#007bff',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    transition: 'background-color 0.2s'
-                  }}
-                  onMouseOver={(e) => e.target.style.backgroundColor = '#0056b3'}
-                  onMouseOut={(e) => e.target.style.backgroundColor = '#007bff'}
+                  className="details-modal-close-btn"
                 >
                   Cerrar
                 </button>

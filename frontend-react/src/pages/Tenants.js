@@ -235,17 +235,25 @@ const Tenants = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   return (
     <div className="dashboard-container">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-      
       <div className="main-content">
         <Header 
-            title="Gestión de Tenants"
-            userName={user?.first_name}
-            onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
+        title="Gestión de Tenants"
+        userName={user?.first_name}
+        onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
         />
-        
         <div className="content-wrapper">
           <div className="tenants-container">
 
@@ -560,80 +568,72 @@ const Tenants = () => {
 
       {/* Modal de Detalles */}
       {detailsModal.show && (
-        <div className="modal-overlay" onClick={() => setDetailsModal({ show: false, tenant: null })}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2>📋 Detalles del Tenant</h2>
-              <button 
-                className="modal-close"
-                onClick={() => setDetailsModal({ show: false, tenant: null })}
-              >
-                ✕
-              </button>
-            </div>
-            <div className="modal-body">
-              <div className="details-grid">
-                <div className="detail-item">
-                  <label>ID:</label>
-                  <span>{detailsModal.tenant?.id}</span>
-                </div>
-                <div className="detail-item">
-                  <label>Nombre:</label>
-                  <span>{detailsModal.tenant?.name}</span>
-                </div>
-                <div className="detail-item">
-                  <label>Empresa:</label>
-                  <span>{detailsModal.tenant?.company_name || '-'}</span>
-                </div>
-                <div className="detail-item">
-                  <label>Descripción:</label>
-                  <span>{detailsModal.tenant?.company_description || '-'}</span>
-                </div>
-                <div className="detail-item">
-                  <label>Subdominio:</label>
-                  <span><code>{detailsModal.tenant?.subdomain}</code></span>
-                </div>
-                <div className="detail-item">
-                  <label>Dominio:</label>
-                  <span>{detailsModal.tenant?.domain || '-'}</span>
-                </div>
-                <div className="detail-item">
-                  <label>Estado:</label>
-                  <span className={`status-badge status-${detailsModal.tenant?.status}`}>
-                    {detailsModal.tenant?.status}
-                  </span>
-                </div>
-                <div className="detail-item">
-                  <label>Tema:</label>
-                  <span>{detailsModal.tenant?.settings?.theme || 'light'}</span>
-                </div>
-                <div className="detail-item">
-                  <label>Idioma:</label>
-                  <span>{detailsModal.tenant?.settings?.language || 'es'}</span>
-                </div>
-                <div className="detail-item">
-                  <label>Máx. Usuarios:</label>
-                  <span>{detailsModal.tenant?.settings?.max_users || 10}</span>
-                </div>
-                <div className="detail-item">
-                  <label>Creado:</label>
-                  <span>{new Date(detailsModal.tenant?.created_at).toLocaleDateString('es-ES')}</span>
-                </div>
-                <div className="detail-item">
-                  <label>Actualizado:</label>
-                  <span>{new Date(detailsModal.tenant?.updated_at).toLocaleDateString('es-ES')}</span>
-                </div>
+        <div className="details-modal-overlay">
+            <div className="details-modal-content">
+              <div className="details-modal-header">
+                <h2>Detalles del Tenant</h2>
+              </div>
+              <div className="details-info-container">
+                 <div className="details-info-item">
+                   <label className='details-info-label'>ID:</label>
+                   <span className='details-info-value'>{detailsModal.tenant?.id}</span>
+                 </div>
+                 <div className="details-info-item">
+                   <label className='details-info-label'>Nombre:</label>
+                   <span className='details-info-value'>{detailsModal.tenant?.name}</span>
+                 </div>
+                 <div className="details-info-item">
+                   <label className='details-info-label'>Empresa:</label>
+                   <span className='details-info-value'>{detailsModal.tenant?.company_name || '-'}</span>
+                 </div>
+                 <div className="details-info-item">
+                   <label className='details-info-label'>Descripción:</label>
+                   <span className='details-info-value'>{detailsModal.tenant?.company_description || '-'}</span>
+                 </div>
+                 <div className="details-info-item">
+                   <label className='details-info-label'>Subdominio:</label>
+                   <span><code>{detailsModal.tenant?.subdomain}</code></span>
+                 </div>
+                 <div className="details-info-item">
+                   <label className='details-info-label'>Dominio:</label>
+                   <span className='details-info-value'>{detailsModal.tenant?.domain || '-'}</span>
+                 </div>
+                 <div className="details-info-item">
+                   <label className='details-info-label'>Estado:</label>
+                   <span className={`status-badge status-${detailsModal.tenant?.status}`}>
+                     {detailsModal.tenant?.status}
+                   </span>
+                 </div>
+                 <div className="details-info-item">
+                   <label className='details-info-label'>Tema:</label>
+                   <span className='details-info-value'>{detailsModal.tenant?.settings?.theme || 'light'}</span>
+                 </div>
+                 <div className="details-info-item">
+                   <label className='details-info-label'>Idioma:</label>
+                   <span className='details-info-value'>{detailsModal.tenant?.settings?.language || 'es'}</span>
+                 </div>
+                 <div className="details-info-item">
+                   <label className='details-info-label'>Máx. Usuarios:</label>
+                   <span className='details-info-value'>{detailsModal.tenant?.settings?.max_users || 10}</span>
+                 </div>
+                 <div className="details-info-item">
+                   <label className='details-info-label'>Creado:</label>
+                   <span className='details-info-value'>{formatDate(detailsModal.tenant?.created_at)}</span>
+                 </div>
+                 <div className="details-info-item">
+                   <label className='details-info-label'>Actualizado:</label>
+                   <span className='details-info-value'>{formatDate(detailsModal.tenant?.updated_at)}</span>
+                 </div>
+              </div>
+              <div className="details-modal-footer">
+                <button 
+                  onClick={() => setDetailsModal({ show: false, tenant: null })}
+                  className="details-modal-close-btn"
+                >
+                  Cerrar
+                </button>
               </div>
             </div>
-            <div className="modal-footer">
-              <button 
-                className="btn-secondary"
-                onClick={() => setDetailsModal({ show: false, tenant: null })}
-              >
-                Cerrar
-              </button>
-            </div>
-          </div>
         </div>
       )}
     </div>

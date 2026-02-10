@@ -945,3 +945,412 @@
     transform: translateY(0);
   }
 }
+
+/* ============================================
+   ESTILOS COMUNES DE MODALES (Reutilizables)
+   ============================================ */
+
+/* Modal de Formulario - Usado en Maestro, Creditors, Lawyers, etc. */
+.form-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.form-modal-content {
+  background-color: #fff;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+/* Encabezado del formulario en card */
+.form-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  background: #f7fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.form-card-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #1a1a1a;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #718096;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #1a1a1a;
+}
+
+/* Filas y grupos de formulario */
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #4a4a4a;
+  box-shadow: 0 0 0 3px rgba(74, 74, 74, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.error-text {
+  font-size: 12px;
+  color: #f56565;
+  margin-top: 4px;
+}
+
+/* Estado vacío */
+.empty-state {
+  padding: 60px 20px;
+  text-align: center;
+  color: #999;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 16px;
+}
+
+/* Overlay de carga */
+.loading-overlay {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+}
+
+/* Botones de iconos */
+.btn-icon {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.btn-icon:hover {
+  background: #f7fafc;
+}
+
+.btn-icon.btn-delete:hover {
+  background: #fee2e2;
+}
+
+/* Badges de estado */
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-activo {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-inactivo {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Animación de slide in */
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   MODAL DE DETALLES (Reutilizable)
+   ============================================ */
+
+/* Overlay del modal de detalles */
+.details-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Contenedor del modal de detalles */
+.details-modal-content {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+}
+
+/* Header del modal de detalles */
+.details-modal-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.details-modal-header h2 {
+  color: #1a1a1a;
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+}
+
+/* Contenedor de información */
+.details-info-container {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+/* Item de información individual */
+.details-info-item {
+  margin-bottom: 16px;
+}
+
+.details-info-item:last-child {
+  margin-bottom: 0;
+}
+
+.details-info-label {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  font-weight: 600;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.details-info-value {
+  font-size: 16px;
+  color: #1a1a1a;
+  font-weight: 500;
+  margin: 0;
+}
+
+.details-info-value-normal {
+  font-size: 14px;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.details-info-value-small {
+  font-size: 13px;
+  color: #999;
+  margin: 0;
+}
+
+/* Badge en modal de detalles */
+.details-status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.details-status-badge.active {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.details-status-badge.inactive {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.details-status-badge.internal {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+.details-status-badge.external {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+/* Footer del modal de detalles */
+.details-modal-footer {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.details-modal-close-btn {
+  padding: 10px 24px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.details-modal-close-btn:hover {
+  background-color: #0056b3;
+}
+
+/* ============================================
+   MODAL DE CONFIRMACIÓN DE ELIMINACIÓN
+   ============================================ */
+
+.delete-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.delete-modal-content {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  animation: slideUp 0.3s ease;
+}
+
+.delete-modal-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.delete-modal-content h2 {
+  color: #1a1a1a;
+  margin-bottom: 8px;
+  font-size: 1.3rem;
+}
+
+.delete-modal-content p {
+  color: #666;
+  margin-bottom: 24px;
+  font-size: 0.95rem;
+}
+
+.delete-modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.delete-modal-cancel,
+.delete-modal-confirm {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.delete-modal-cancel {
+  background-color: #666;
+  color: #fff;
+}
+
+.delete-modal-cancel:hover {
+  background-color: #555;
+}
+
+.delete-modal-cancel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.delete-modal-confirm {
+  background-color: #ff4444;
+  color: #fff;
+}
+
+.delete-modal-confirm:hover {
+  background-color: #cc0000;
+}
+
+.delete-modal-confirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

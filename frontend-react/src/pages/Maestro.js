@@ -376,7 +376,7 @@ const Maestro = () => {
                   </button>
                 </div>
               </form>
-            </div>
+              </div>
             </div>
           )}
 
@@ -590,147 +590,47 @@ const Maestro = () => {
 
         {/* Modal de detalles */}
         {detailsModal.show && detailsModal.maestro && (
-          <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000
-          }}>
-            <div style={{
-              backgroundColor: '#fff',
-              borderRadius: '12px',
-              padding: '30px',
-              maxWidth: '450px',
-              width: '90%',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
-            }}>
-              <div style={{ textAlign: 'center', marginBottom: '25px' }}>
-                <h2 style={{ color: '#1a1a1a', marginBottom: '10px' }}>Detalles del Maestro</h2>
+          <div className="details-modal-overlay">
+            <div className="details-modal-content">
+              <div className="details-modal-header">
+                <h2>Detalles del Maestro</h2>
               </div>
 
-              <div style={{ 
-                backgroundColor: '#f5f5f5',
-                borderRadius: '8px',
-                padding: '20px',
-                marginBottom: '20px'
-              }}>
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ 
-                    display: 'block',
-                    fontSize: '12px',
-                    color: '#666',
-                    fontWeight: '600',
-                    marginBottom: '6px',
-                    textTransform: 'uppercase'
-                  }}>Valor</label>
-                  <p style={{ 
-                    fontSize: '16px', 
-                    color: '#1a1a1a', 
-                    fontWeight: '500',
-                    margin: 0
-                  }}>{detailsModal.maestro.value}</p>
+              <div className="details-info-container">
+                <div className="details-info-item">
+                  <label className="details-info-label">Valor</label>
+                  <p className="details-info-value">{detailsModal.maestro.value}</p>
                 </div>
 
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ 
-                    display: 'block',
-                    fontSize: '12px',
-                    color: '#666',
-                    fontWeight: '600',
-                    marginBottom: '6px',
-                    textTransform: 'uppercase'
-                  }}>Código Maestro</label>
-                  <p style={{ 
-                    fontSize: '16px', 
-                    color: '#1a1a1a', 
-                    fontWeight: '500',
-                    margin: 0
-                  }}>{detailsModal.maestro.code_maestro}</p>
+                <div className="details-info-item">
+                  <label className="details-info-label">Código Maestro</label>
+                  <p className="details-info-value">{detailsModal.maestro.code_maestro}</p>
                 </div>
 
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ 
-                    display: 'block',
-                    fontSize: '12px',
-                    color: '#666',
-                    fontWeight: '600',
-                    marginBottom: '6px',
-                    textTransform: 'uppercase'
-                  }}>Estado</label>
-                  <p style={{ margin: 0 }}>
-                    <span style={{
-                      display: 'inline-block',
-                      padding: '6px 12px',
-                      borderRadius: '4px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      backgroundColor: detailsModal.maestro.status === 'activo' ? '#d4edda' : '#f8d7da',
-                      color: detailsModal.maestro.status === 'activo' ? '#155724' : '#721c24'
-                    }}>
+                <div className="details-info-item">
+                  <label className="details-info-label">Estado</label>
+                  <p>
+                    <span className={`details-status-badge ${detailsModal.maestro.status === 'activo' ? 'active' : 'inactive'}`}>
                       {getStatusLabel(detailsModal.maestro.status)}
                     </span>
                   </p>
                 </div>
 
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ 
-                    display: 'block',
-                    fontSize: '12px',
-                    color: '#666',
-                    fontWeight: '600',
-                    marginBottom: '6px',
-                    textTransform: 'uppercase'
-                  }}>Creado</label>
-                  <p style={{ 
-                    fontSize: '14px', 
-                    color: '#1a1a1a', 
-                    margin: 0
-                  }}>{formatDate(detailsModal.maestro.created_at)}</p>
+                <div className="details-info-item">
+                  <label className="details-info-label">Creado</label>
+                  <p className="details-info-value-normal">{formatDate(detailsModal.maestro.created_at)}</p>
                 </div>
 
-                <div>
-                  <label style={{ 
-                    display: 'block',
-                    fontSize: '12px',
-                    color: '#666',
-                    fontWeight: '600',
-                    marginBottom: '6px',
-                    textTransform: 'uppercase'
-                  }}>Actualizado</label>
-                  <p style={{ 
-                    fontSize: '14px', 
-                    color: '#1a1a1a', 
-                    margin: 0
-                  }}>{formatDate(detailsModal.maestro.updated_at)}</p>
+                <div className="details-info-item">
+                  <label className="details-info-label">Actualizado</label>
+                  <p className="details-info-value-normal">{formatDate(detailsModal.maestro.updated_at)}</p>
                 </div>
               </div>
 
-              <div style={{ 
-                display: 'flex', 
-                gap: '10px', 
-                justifyContent: 'flex-end'
-              }}>
+              <div className="details-modal-footer">
                 <button 
                   onClick={closeDetailsModal}
-                  style={{
-                    padding: '10px 24px',
-                    backgroundColor: '#007bff',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    transition: 'background-color 0.2s'
-                  }}
-                  onMouseOver={(e) => e.target.style.backgroundColor = '#0056b3'}
-                  onMouseOut={(e) => e.target.style.backgroundColor = '#007bff'}
+                  className="details-modal-close-btn"
                 >
                   Cerrar
                 </button>

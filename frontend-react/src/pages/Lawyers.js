@@ -721,174 +721,58 @@ const Lawyers = () => {
 
         {/* Modal de detalles */}
         {detailsModal.show && detailsModal.lawyer && (
-          <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000
-          }}>
-            <div style={{
-              backgroundColor: '#fff',
-              borderRadius: '12px',
-              padding: '30px',
-              maxWidth: '500px',
-              width: '90%',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-              maxHeight: '80vh',
-              overflowY: 'auto'
-            }}>
-              <div style={{ textAlign: 'center', marginBottom: '25px' }}>
-                <h2 style={{ color: '#1a1a1a', marginBottom: '10px' }}>Detalles del Abogado</h2>
+          <div className="details-modal-overlay">
+            <div className="details-modal-content">
+              <div className="details-modal-header">
+                <h2>Detalles del Abogado</h2>
               </div>
 
-              <div style={{ 
-                backgroundColor: '#f5f5f5',
-                borderRadius: '8px',
-                padding: '20px',
-                marginBottom: '20px'
-              }}>
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ 
-                    display: 'block',
-                    fontSize: '12px',
-                    color: '#666',
-                    fontWeight: '600',
-                    marginBottom: '6px',
-                    textTransform: 'uppercase'
-                  }}>Nombre Completo</label>
-                  <p style={{ 
-                    fontSize: '16px', 
-                    color: '#1a1a1a', 
-                    fontWeight: '500',
-                    margin: 0
-                  }}>{detailsModal.lawyer.first_name} {detailsModal.lawyer.last_name}</p>
+              <div className="details-info-container">
+                <div className="details-info-item">
+                  <label className="details-info-label">Nombre Completo</label>
+                  <p className="details-info-value">{detailsModal.lawyer.first_name} {detailsModal.lawyer.last_name}</p>
                 </div>
 
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ 
-                    display: 'block',
-                    fontSize: '12px',
-                    color: '#666',
-                    fontWeight: '600',
-                    marginBottom: '6px',
-                    textTransform: 'uppercase'
-                  }}>Correo Electrónico</label>
-                  <p style={{ 
-                    fontSize: '14px', 
-                    color: '#1a1a1a', 
-                    margin: 0
-                  }}>{detailsModal.lawyer.email}</p>
+                <div className="details-info-item">
+                  <label className="details-info-label">Correo Electrónico</label>
+                  <p className="details-info-value-normal">{detailsModal.lawyer.email}</p>
                 </div>
 
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ 
-                    display: 'block',
-                    fontSize: '12px',
-                    color: '#666',
-                    fontWeight: '600',
-                    marginBottom: '6px',
-                    textTransform: 'uppercase'
-                  }}>Teléfono</label>
-                  <p style={{ 
-                    fontSize: '14px', 
-                    color: '#1a1a1a', 
-                    margin: 0
-                  }}>{detailsModal.lawyer.phone}</p>
+                <div className="details-info-item">
+                  <label className="details-info-label">Teléfono</label>
+                  <p className="details-info-value-normal">{detailsModal.lawyer.phone}</p>
                 </div>
 
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ 
-                    display: 'block',
-                    fontSize: '12px',
-                    color: '#666',
-                    fontWeight: '600',
-                    marginBottom: '6px',
-                    textTransform: 'uppercase'
-                  }}>Tipo de Abogado</label>
-                  <p style={{ margin: 0 }}>
-                    <span style={{
-                      display: 'inline-block',
-                      padding: '6px 12px',
-                      borderRadius: '4px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      backgroundColor: detailsModal.lawyer.lawyer_type === 'internal' ? '#e3f2fd' : '#fff3e0',
-                      color: detailsModal.lawyer.lawyer_type === 'internal' ? '#1565c0' : '#e65100'
-                    }}>
+                <div className="details-info-item">
+                  <label className="details-info-label">Tipo de Abogado</label>
+                  <p>
+                    <span className={`details-status-badge ${detailsModal.lawyer.lawyer_type}`}>
                       {getTypeLabel(detailsModal.lawyer.lawyer_type)}
                     </span>
                   </p>
                 </div>
 
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ 
-                    display: 'block',
-                    fontSize: '12px',
-                    color: '#666',
-                    fontWeight: '600',
-                    marginBottom: '6px',
-                    textTransform: 'uppercase'
-                  }}>Estado</label>
-                  <p style={{ margin: 0 }}>
-                    <span style={{
-                      display: 'inline-block',
-                      padding: '6px 12px',
-                      borderRadius: '4px',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      backgroundColor: detailsModal.lawyer.status === 'active' ? '#d4edda' : '#f8d7da',
-                      color: detailsModal.lawyer.status === 'active' ? '#155724' : '#721c24'
-                    }}>
+                <div className="details-info-item">
+                  <label className="details-info-label">Estado</label>
+                  <p>
+                    <span className={`details-status-badge ${detailsModal.lawyer.status}`}>
                       {getStatusLabel(detailsModal.lawyer.status)}
                     </span>
                   </p>
                 </div>
 
-                <div>
-                  <label style={{ 
-                    display: 'block',
-                    fontSize: '12px',
-                    color: '#666',
-                    fontWeight: '600',
-                    marginBottom: '6px',
-                    textTransform: 'uppercase'
-                  }}>ID de Usuario</label>
-                  <p style={{ 
-                    fontSize: '13px', 
-                    color: '#999', 
-                    fontFamily: 'monospace',
-                    margin: 0,
-                    wordBreak: 'break-all'
-                  }}>{detailsModal.lawyer.user_id || 'N/A'}</p>
+                <div className="details-info-item">
+                  <label className="details-info-label">ID de Usuario</label>
+                  <p className="details-info-value-small" style={{ fontFamily: 'monospace', wordBreak: 'break-all' }}>
+                    {detailsModal.lawyer.user_id || 'N/A'}
+                  </p>
                 </div>
               </div>
 
-              <div style={{ 
-                display: 'flex', 
-                gap: '10px', 
-                justifyContent: 'flex-end'
-              }}>
+              <div className="details-modal-footer">
                 <button 
                   onClick={closeDetailsModal}
-                  style={{
-                    padding: '10px 24px',
-                    backgroundColor: '#007bff',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    transition: 'background-color 0.2s'
-                  }}
-                  onMouseOver={(e) => e.target.style.backgroundColor = '#0056b3'}
-                  onMouseOut={(e) => e.target.style.backgroundColor = '#007bff'}
+                  className="details-modal-close-btn"
                 >
                   Cerrar
                 </button>
