@@ -28,8 +28,8 @@ const CasesList = ({ cases }) => {
   };
 
   return (
-    <div className="cases-list">
-      <table className="cases-table">
+    <div className="general-table">
+      <table >
         <thead>
           <tr>
             <th>Número de Caso</th>

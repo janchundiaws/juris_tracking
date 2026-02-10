@@ -152,31 +152,7 @@ const Profile = () => {
                 <h2>Información Personal</h2>
                 <button 
                   onClick={() => setIsEditing(true)}
-                  style={{
-                    padding: '12px 28px',
-                    backgroundColor: '#007bff',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '8px',
-                    fontSize: '15px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    boxShadow: '0 2px 8px rgba(0, 123, 255, 0.2)',
-                  }}
-                  onMouseOver={(e) => {
-                    e.target.style.backgroundColor = '#0056b3';
-                    e.target.style.boxShadow = '0 4px 16px rgba(0, 123, 255, 0.4)';
-                    e.target.style.transform = 'translateY(-2px)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.target.style.backgroundColor = '#007bff';
-                    e.target.style.boxShadow = '0 2px 8px rgba(0, 123, 255, 0.2)';
-                    e.target.style.transform = 'translateY(0)';
-                  }}
+                  className="btn-edit-profile"
                 >
                   ✎ Editar Perfil
                 </button>

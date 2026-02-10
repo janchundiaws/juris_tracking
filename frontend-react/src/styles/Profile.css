@@ -280,6 +280,28 @@
   border-color: #cbd5e0;
 }
 
+.btn-edit-profile {
+  padding: 12px 28px;
+  background-color: #171c22;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+}
+
+.btn-edit-profile:hover {
+  background-color: #232527;
+  box-shadow: 0 4px 16px rgba(52, 52, 53, 0.4);
+  transform: translateY(-2px);
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .profile-content {

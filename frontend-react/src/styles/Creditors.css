@@ -327,15 +327,6 @@
     grid-template-columns: 1fr;
   }
 
-  .creditors-table {
-    font-size: 12px;
-  }
-
-  .creditors-table th,
-  .creditors-table td {
-    padding: 12px;
-  }
-
   .action-buttons {
     gap: 4px;
   }

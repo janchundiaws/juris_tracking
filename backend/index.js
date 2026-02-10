@@ -148,17 +148,17 @@ const insertDataInicial = async () => {
       console.log('✅ Datos iniciales de provincias insertados');
       }
 
-    //   const countRoles = await Role.count();
-    //   if (countRoles === 0) {
-    //     const defaultRoles = [
-    //       { name: 'admin' ,description: 'Administrador del sistema'},
-    //       { name: 'abogado', description: 'Usuario con rol de abogado' },
-    //       { name: 'asistente', description: 'Usuario con rol de asistente'}
-    //     ];
+      const countRoles = await Role.count();
+      if (countRoles === 0) {
+        const defaultRoles = [
+          { name: 'admin' ,description: 'Administrador del sistema'},
+          { name: 'abogado', description: 'Usuario con rol de abogado' },
+          { name: 'asistente', description: 'Usuario con rol de asistente'}
+        ];
         
-    //     await Role.bulkCreate(defaultRoles);
-    //     console.log('✅ Datos iniciales de roles insertados');  
-    // }
+        await Role.bulkCreate(defaultRoles);
+        console.log('✅ Datos iniciales de roles insertados');  
+    }
 
   } catch (error) {
     console.error('❌ Error al insertar datos iniciales:', error);

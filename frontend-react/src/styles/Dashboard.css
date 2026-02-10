@@ -555,6 +555,70 @@
   font-size: 14px;
   color: #2d3748;
 }
+/* fin de table*/
+
+
+/* General Table */
+.general-table {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.general-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.general-table thead {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.general-table th {
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.general-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s ease;
+}
+
+.general-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.general-table td {
+  padding: 16px;
+  font-size: 0.95rem;
+  color: #2c3e50;
+}
+
+.general-name strong {
+  color: #2c3e50;
+  font-size: 1rem;
+}
+
+.subdomain-badge {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.text-center {
+  text-align: center;
+}
+/* General Table */
 
 .case-number {
   font-weight: 600;

@@ -23,7 +23,8 @@ const Navigation = ({ isCollapsed = false, onItemClick = null }) => {
       ]
     },
     { path: '/profile', label: 'Mi Perfil', icon: '👤' },
-    { path: '/settings', label: 'Configuración', icon: '🔧' }
+    { path: '/settings', label: 'Configuración', icon: '🔧' },
+    { path: '/tenants', label: 'Tenants', icon: '🏢' }
   ];
 
   const handleItemClick = (item) => {

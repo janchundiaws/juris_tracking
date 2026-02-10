@@ -16,6 +16,17 @@ const Tenant = sequelize.define('Tenant', {
       len: [1, 200]
     }
   },
+  company_name: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+    validate: {
+      len: [0, 255]
+    }
+  },
+  company_description: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
   subdomain: {
     type: DataTypes.STRING(100),
     allowNull: false,

@@ -14,6 +14,7 @@ import Calendar from './pages/Calendar';
 import Maestro from './pages/Maestro';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
+import Tenants from './pages/Tenants';
 import './App.css';
 
 function App() {
@@ -137,6 +138,15 @@ function App() {
             element={
               <PrivateRoute>
                 <Settings />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/tenants"
+            element={
+              <PrivateRoute>
+                <Tenants />
               </PrivateRoute>
             }
           />

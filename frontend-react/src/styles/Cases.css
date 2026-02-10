@@ -41,7 +41,6 @@
   align-items: center;
   gap: 8px;
 }
-/*FIN */
 
 /* Modal de Formulario */
 .form-modal-overlay {
@@ -247,33 +246,6 @@
   padding: 60px 20px;
   text-align: center;
   color: #718096;
-}
-
-.cases-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.cases-table th {
-  text-align: left;
-  padding: 12px;
-  background: #f7fafc;
-  color: #4a5568;
-  font-size: 13px;
-  font-weight: 600;
-  text-transform: uppercase;
-  border-bottom: 2px solid #e2e8f0;
-}
-
-.cases-table td {
-  padding: 16px 12px;
-  border-bottom: 1px solid #e2e8f0;
-  font-size: 14px;
-  color: #2d3748;
-}
-
-.cases-table tbody tr:hover {
-  background: #f7fafc;
 }
 
 .case-number {

@@ -814,7 +814,8 @@ const Cases = () => {
             <p>No hay casos que coincidan con tu búsqueda</p>
           </div>
         ) : (
-          <table className="cases-table">
+          <div className="general-table">
+          <table>
             <thead>
               <tr>
                 <th>Número de Caso</th>
@@ -866,6 +867,7 @@ const Cases = () => {
               ))}
             </tbody>
           </table>
+          </div>
         )}
 
         {/* Controles de paginación */}

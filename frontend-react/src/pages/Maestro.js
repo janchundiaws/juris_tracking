@@ -433,7 +433,8 @@ const Maestro = () => {
                 <p>No hay maestros que coincidan con tu búsqueda</p>
               </div>
             ) : (
-              <table className="maestro-table">
+              <div className="general-table">
+                <table>
                 <thead>
                   <tr>
                     <th>Valor</th>
@@ -489,6 +490,7 @@ const Maestro = () => {
                   ))}
                 </tbody>
               </table>
+              </div>
             )}
           </div>
         </div>

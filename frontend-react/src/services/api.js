@@ -440,6 +440,11 @@ export const eventsService = {
 
 // Servicios de tenants
 export const tenantsService = {
+  getAll: async () => {
+    const response = await apiClient.get('/tenants');
+    return response.data;
+  },
+
   getCurrent: async () => {
     const response = await apiClient.get('/tenants/current');
     return response.data;
@@ -450,6 +455,11 @@ export const tenantsService = {
     return response.data;
   },
 
+  create: async (tenantData) => {
+    const response = await apiClient.post('/tenants', tenantData);
+    return response.data;
+  },
+
   update: async (id, tenantData) => {
     const response = await apiClient.put(`/tenants/${id}`, tenantData);
     return response.data;
@@ -457,6 +467,11 @@ export const tenantsService = {
 
   updateSettings: async (id, settings) => {
     const response = await apiClient.patch(`/tenants/${id}/settings`, settings);
+    return response.data;
+  },
+
+  delete: async (id) => {
+    const response = await apiClient.delete(`/tenants/${id}`);
     return response.data;
   },
 };

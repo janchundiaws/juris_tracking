@@ -426,7 +426,8 @@ const Creditors = () => {
                 <p>No hay acreedores que coincidan con tu búsqueda</p>
               </div>
             ) : (
-              <table className="creditors-table">
+              <div className="general-table">
+              <table>
                 <thead>
                   <tr>
                     <th>Nombre</th>
@@ -482,6 +483,7 @@ const Creditors = () => {
                   ))}
                 </tbody>
               </table>
+              </div>
             )}
           </div>
 

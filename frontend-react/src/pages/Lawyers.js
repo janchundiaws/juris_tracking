@@ -482,7 +482,8 @@ const Lawyers = () => {
                 <p>No hay abogados que coincidan con tu búsqueda</p>
               </div>
             ) : (
-              <table className="lawyers-table">
+              <div className="general-table">
+              <table>
                 <thead>
                   <tr>
                     <th>Nombre Completo</th>
@@ -542,6 +543,7 @@ const Lawyers = () => {
                   ))}
                 </tbody>
               </table>
+              </div>
             )}
           </div>
 
