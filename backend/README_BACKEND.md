@@ -203,3 +203,19 @@ Para más información, consulta la documentación oficial:
 - [Sequelize](https://sequelize.org)
 - [PostgreSQL](https://www.postgresql.org)
 - [JWT](https://jwt.io)
+
+
+## comando para crear la imagen 
+```bash
+docker build -t juris-backend .
+```
+
+## comandos para construir el contenedor 
+```bash
+docker run -d \
+  --name juris-backend \
+  --env-file .env \
+  --network proxy_network \
+  -p 3003:3003 \
+  juris-backend
+```
