@@ -12,11 +12,10 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
-      - proxy_network
+      - juris_net
 
 networks:
-  proxy_network:
-    external: true
+  juris_net:
 
 volumes:
   rabbitmq_data:

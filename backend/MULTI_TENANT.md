@@ -244,14 +244,6 @@ http://lawfirm.localhost:3003
 - ✅ **FK CASCADE**: Al eliminar un tenant, se eliminan todos sus datos
 - ✅ **Índices en tenant_id**: Queries optimizados
 
-## Próximos Pasos
-
-- [ ] Frontend: Configurar CORS para múltiples subdominios
-- [ ] Frontend: Extraer subdomain del window.location.hostname
-- [ ] Panel de administración de tenants
-- [ ] Endpoint para crear nuevos tenants (solo super admin)
-- [ ] Métricas por tenant
-- [ ] Backups por tenant
 
 ## Troubleshooting
 
