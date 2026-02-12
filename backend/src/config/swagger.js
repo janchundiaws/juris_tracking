@@ -18,6 +18,10 @@ const options = {
         description: 'Servidor de desarrollo'
       },
       {
+        url: 'https://juris-backend.orb.local',
+        description: 'Servidor de pruebas'
+      },
+      {
         url: 'https://api.juristracking.com',
         description: 'Servidor de producción'
       }
