@@ -3,6 +3,10 @@ FROM node:18-alpine AS build
 
 WORKDIR /app
 
+# Argumentos de build para variables de entorno
+ARG REACT_APP_API_URL=https://juris-backend.orb.local/api
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+
 # Copiar archivos de dependencias
 COPY package*.json ./
 

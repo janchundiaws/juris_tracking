@@ -16,7 +16,7 @@ const documentsRoutes = require('./src/routes/documents');
 const activitiesRoutes = require('./src/routes/activities');
 const eventsRoutes = require('./src/routes/events');
 const { startUserConsumer } = require('./src/consumers/userConsumer');
-const { tenantMiddleware, optionalTenantMiddleware } = require('./src/middleware/tenant');
+const { tenantMiddleware } = require('./src/middleware/tenant');
 const { addTenantScope } = require('./src/middleware/tenantScope');
 const Tenant = require('./src/models/Tenant');
 const Provincie = require('./src/models/Provincie');
@@ -35,8 +35,11 @@ const PORT = process.env.PORT || 3003;
 // CORS - Permitir solicitudes desde el frontend
 app.use(cors({
   origin: '*', // En producción, especifica el dominio exacto
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-ID'],
+  credentials: true,
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
 
 // Middleware

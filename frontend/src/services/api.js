@@ -17,6 +17,13 @@ apiClient.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    //captura del tenant desde la ruta del frontend
+    const tenant = window.location.hostname.split('.')[0];
+    if (tenant) {
+      config.headers['X-Tenant-ID'] = tenant;
+    }
+    console.log("configuración del request:", config);
     return config;
   },
   (error) => {

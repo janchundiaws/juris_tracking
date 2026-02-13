@@ -67,8 +67,8 @@ router.post('/registro', tenantMiddleware, async (req, res) => {
           { email: email },
           { username: username }
         ]
-      },
-      where: { tenant_id: req.tenantId }
+      }//,
+      //where: { tenant_id: req.tenantId }
     });
     
     if (usuarioExistente) {
@@ -124,6 +124,7 @@ router.post('/registro', tenantMiddleware, async (req, res) => {
       token
     });
   } catch (error) {
+    console.error('Error al registrar usuario:', error);
     res.status(500).json({ error: error.message });
   }
 });

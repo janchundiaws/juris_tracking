@@ -7,60 +7,35 @@ const Tenant = require('../models/Tenant');
 const tenantMiddleware = async (req, res, next) => {
   try {
     // Obtener el host del request
-    const host = req.hostname || req.get('host')?.split(':')[0];
-    
+    //const host = req.hostname || req.get('host')?.split(':')[0];
+    const host = req.headers['x-tenant-id'];
+    console.log('Host de la solicitud:', host);
+
     if (!host) {
       return res.status(400).json({ 
         error: 'No se pudo determinar el dominio de la solicitud' 
       });
     }
 
-    // Extraer subdominio del host
-    // Ejemplo: cliente1.juristracking.com -> cliente1
-    // Ejemplo: localhost -> localhost (para desarrollo)
-    const parts = host.split('.');
-    let subdomain;
-
     // Si es localhost o IP, usar como está para desarrollo
     if (host === 'localhost' || host === '127.0.0.1' || /^\d+\.\d+\.\d+\.\d+$/.test(host)) {
-      subdomain = process.env.DEFAULT_TENANT;
-    } else if (parts.length >= 3) {
-      // Para dominios como cliente.juristracking.com
-      subdomain = parts[0];
-    } else if (parts.length === 2) {
-      // Para dominios personalizados como cliente.com
-      subdomain = parts[0];
-    } else {
-      subdomain = host;
+      host = process.env.DEFAULT_TENANT;
     }
 
     // Buscar el tenant en la base de datos
     const tenant = await Tenant.findOne({
       where: {
-        subdomain: subdomain,
+        subdomain: host,
         status: 'active'
       }
     });
 
     // Si no existe el tenant y no estamos en desarrollo, rechazar
     if (!tenant) {
-      // En desarrollo, crear tenant automáticamente si no existe
-      if (process.env.NODE_ENV === 'development') {
-        const newTenant = await Tenant.create({
-          name: `Tenant ${subdomain}`,
-          subdomain: subdomain,
-          status: 'active',
-          settings: {}
-        });
-        
-        req.tenant = newTenant;
-        console.log(`✅ Tenant creado automáticamente: ${subdomain}`);
-      } else {
         return res.status(404).json({ 
           error: 'Tenant no encontrado o inactivo',
-          subdomain: subdomain 
+          subdomain: host 
         });
-      }
     } else {
       req.tenant = tenant;
     }
@@ -70,7 +45,7 @@ const tenantMiddleware = async (req, res, next) => {
     
     // Log para debugging
     if (process.env.NODE_ENV === 'development') {
-      console.log(`🔍 Tenant detectado: ${req.tenant.name} (${subdomain})`);
+      console.log(`🔍 Tenant detectado: ${req.tenant.name} (${host})`);
     }
 
     next();
@@ -90,6 +65,8 @@ const tenantMiddleware = async (req, res, next) => {
 const optionalTenantMiddleware = async (req, res, next) => {
   try {
     const host = req.hostname || req.get('host')?.split(':')[0];
+    const tenantFromHeader = req.headers['x-tenant-id'];
+    console.log('🔍 Host de la solicitud (opcional):', tenantFromHeader);
     
     if (!host) {
       return next();
@@ -128,6 +105,6 @@ const optionalTenantMiddleware = async (req, res, next) => {
 };
 
 module.exports = {
-  tenantMiddleware,
-  optionalTenantMiddleware
+  tenantMiddleware//,
+  //optionalTenantMiddleware
 };
