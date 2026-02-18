@@ -49,17 +49,86 @@ apiClient.interceptors.response.use(
 // Servicios de autenticación
 export const authService = {
   login: async (email, password) => {
-    const response = await apiClient.post('/auth/login', { email, password });
-    return response.data;
+    try {
+      const response = await apiClient.post('/usuarios/login', { email, password });
+      const { token, usuario: userData } = response.data;
+      
+      // Guardar en localStorage
+      localStorage.setItem('usuario', JSON.stringify(userData));
+      localStorage.setItem('token', token);
+      localStorage.setItem('jurisTracking_user', JSON.stringify(userData));
+      localStorage.setItem('jurisTracking_token', token);
+      
+      return { success: true, data: { token, usuario: userData } };
+    } catch (err) {
+      const errorMessage = err.response?.data?.error || 'Error al iniciar sesión';
+      return { success: false, error: errorMessage };
+    }
   },
   
   register: async (userData) => {
-    const response = await apiClient.post('/auth/register', userData);
-    return response.data;
+    try {
+      const response = await apiClient.post('/usuarios/registro', userData);
+      const { token, usuario: newUser } = response.data;
+      
+      // Guardar en localStorage
+      localStorage.setItem('usuario', JSON.stringify(newUser));
+      localStorage.setItem('token', token);
+      localStorage.setItem('jurisTracking_user', JSON.stringify(newUser));
+      localStorage.setItem('jurisTracking_token', token);
+      
+      return { success: true, data: { token, usuario: newUser } };
+    } catch (err) {
+      let errorMessage = 'Error al registrarse';
+      
+      if (err.response) {
+        const status = err.response.status;
+        const data = err.response.data;
+        
+        switch (status) {
+          case 400:
+            errorMessage = data?.error || 'Verifica los datos ingresados';
+            break;
+          case 409:
+            errorMessage = 'El email ya está registrado';
+            break;
+          case 422:
+            errorMessage = data?.error || 'Datos inválidos';
+            break;
+          case 500:
+            errorMessage = data?.error || 'Error del servidor. Intenta más tarde';
+            break;
+          default:
+            errorMessage = data?.error || 'Error al registrarse';
+        }
+      } else if (err.request) {
+        errorMessage = 'No se pudo conectar con el servidor';
+      }
+      
+      return { success: false, error: errorMessage };
+    }
   },
   
   logout: async () => {
-    await apiClient.post('/auth/logout');
+    try {
+      // Intentar notificar al servidor
+      try {
+        await apiClient.post('/usuarios/logout');
+      } catch (err) {
+        console.warn('No se pudo notificar al servidor del logout:', err);
+      }
+      
+      // Limpiar localStorage
+      localStorage.removeItem('usuario');
+      localStorage.removeItem('token');
+      localStorage.removeItem('jurisTracking_user');
+      localStorage.removeItem('jurisTracking_token');
+      
+      return { success: true };
+    } catch (err) {
+      const errorMessage = 'Error al cerrar sesión';
+      return { success: false, error: errorMessage };
+    }
   },
 };
 

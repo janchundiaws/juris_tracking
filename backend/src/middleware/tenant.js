@@ -8,7 +8,7 @@ const tenantMiddleware = async (req, res, next) => {
   try {
     // Obtener el host del request
     //const host = req.hostname || req.get('host')?.split(':')[0];
-    const host = req.headers['x-tenant-id'];
+    let host = req.headers['x-tenant-id'];
     console.log('Host de la solicitud:', host);
 
     if (!host) {
