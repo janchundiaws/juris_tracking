@@ -105,6 +105,5 @@ const optionalTenantMiddleware = async (req, res, next) => {
 };
 
 module.exports = {
-  tenantMiddleware//,
-  //optionalTenantMiddleware
+  tenantMiddleware
 };

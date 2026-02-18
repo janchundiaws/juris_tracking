@@ -23,7 +23,7 @@ apiClient.interceptors.request.use(
     if (tenant) {
       config.headers['X-Tenant-ID'] = tenant;
     }
-    console.log("configuración del request:", config);
+    //console.log("configuración del request:", config);
     return config;
   },
   (error) => {
@@ -35,7 +35,12 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    // Solo redirigir a login si es un 401 y NO estamos ya en la página de login/registro
+    const isAuthPage = window.location.pathname === '/login' || 
+                       window.location.pathname === '/register' ||
+                       window.location.pathname.startsWith('/auth');
+    
+    if (error.response?.status === 401 && !isAuthPage) {
       localStorage.removeItem('token');
       localStorage.removeItem('usuario');
       localStorage.removeItem('jurisTracking_token');

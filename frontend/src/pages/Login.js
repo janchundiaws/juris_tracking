@@ -47,6 +47,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    e.stopPropagation();
     
     const newErrors = validateForm();
     if (Object.keys(newErrors).length > 0) {
@@ -54,16 +55,21 @@ const Login = () => {
       return;
     }
     
-    setIsLoading(true);
-    const result = await login(formData.email, formData.password);
-    setIsLoading(false);
-
-    console.log(result);
+    try {
+      setIsLoading(true);
+      const result = await login(formData.email, formData.password);
     
-    if (result.success) {
-      navigate('/dashboard');
-    } else {
-      setErrors({ general: result.error });
+      
+      if (result.success) {
+        navigate('/dashboard');
+      } else {
+        setErrors({ general: result.error || 'Credenciales incorrectas' });
+      }
+    } catch (error) {
+      console.error('Error en login:', error);
+      setErrors({ general: 'Error inesperado. Por favor intenta de nuevo.' });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -144,7 +150,7 @@ const Login = () => {
               <input type="checkbox" />
               <span>Recordarme</span>
             </label>
-            <a href="/forgot-password" className="link">¿Olvidaste tu contraseña?</a>
+            <Link to="/forgot-password" className="link">¿Olvidaste tu contraseña?</Link>
           </div>
 
           <button type="submit" className="btn-primary" disabled={isLoading}>

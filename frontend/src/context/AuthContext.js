@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setError(null);
       const result = await authService.login(email, password);
-      
+      console.log(result);
       if (result.success) {
         setUser(result.data.usuario);
         return { success: true, data: result.data.usuario };
