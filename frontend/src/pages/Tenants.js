@@ -517,14 +517,14 @@ const Tenants = () => {
                             <td>
                             <div className="actions-group">
                                 <button
-                                className="btn-icon btn-view"
+                                className="btn-icon"
                                 onClick={() => handleViewDetails(tenant)}
                                 title="Ver detalles"
                                 >
                                 👁️
                                 </button>
                                 <button
-                                className="btn-icon btn-edit"
+                                className="btn-icon"
                                 onClick={() => handleEdit(tenant)}
                                 title="Editar"
                                 >
