@@ -167,7 +167,7 @@
 }
 
 .tenants-table thead {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   color: white;
 }
 
@@ -270,7 +270,7 @@
 
 /* Buttons */
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -367,7 +367,7 @@
 
 .spinner {
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #667eea;
+  border-top: 4px solid #008BDB;
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -409,7 +409,7 @@
 
 .pagination-btn {
   padding: 10px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   color: white;
   border: none;
   border-radius: 8px;

@@ -14,7 +14,7 @@
 
 /* Header del Caso */
 .case-details-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   color: white;
   padding: 32px;
   box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
@@ -137,7 +137,7 @@
 
 /* Hero Section */
 .hero-info {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   border-radius: 16px;
   padding: 32px;
   margin-bottom: 24px;
@@ -296,7 +296,7 @@
   padding: 10px 12px;
   background: #f7fafc;
   border-radius: 6px;
-  border-left: 3px solid #667eea;
+  border-left: 3px solid #008BDB;
 }
 
 /* Tarjetas de abogados */
@@ -354,7 +354,7 @@
 
 .date-value {
   font-size: 13px;
-  color: #667eea;
+  color: #008BDB;
   font-weight: 700;
   background: #f0f4ff;
   padding: 6px 12px;
@@ -941,7 +941,7 @@
 }
 
 .modal-body input[type="file"]:hover {
-  border-color: #667eea;
+  border-color: #008BDB;
   background: #f7fafc;
 }
 
@@ -958,7 +958,7 @@
 
 .modal-body textarea:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #008BDB;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -1318,7 +1318,7 @@
   text-align: center;
   margin-bottom: 40px;
   padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   border-radius: 16px;
   color: white;
 }
@@ -1387,7 +1387,7 @@
   font-size: 24px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border: 4px solid white;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
 }
 
 .timeline-activity-content {

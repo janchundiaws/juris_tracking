@@ -44,7 +44,7 @@
   width: 130px;
   height: 130px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   color: white;
   display: flex;
   align-items: center;
@@ -64,7 +64,7 @@
 .profile-avatar-section h2 {
   margin: 0 0 10px;
   font-size: 22px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -117,7 +117,7 @@
 .profile-info-card h3 {
   margin: 0 0 20px;
   font-size: 18px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

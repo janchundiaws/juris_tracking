@@ -63,7 +63,7 @@
 
 .btn-primary {
   padding: 14px 28px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   color: white;
   border: none;
   border-radius: 12px;
@@ -99,8 +99,8 @@
 .btn-secondary {
   padding: 14px 28px;
   background: white;
-  color: #667eea;
-  border: 2px solid #667eea;
+  color: #008BDB;
+  border: 2px solid #008BDB;
   border-radius: 12px;
   font-size: 14px;
   font-weight: 700;

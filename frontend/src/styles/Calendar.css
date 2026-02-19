@@ -54,7 +54,7 @@
   margin: 0;
   font-size: 22px;
   font-weight: 700;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -64,7 +64,7 @@
 }
 
 .calendar-header button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   color: white;
   border: none;
   width: 40px;
@@ -95,7 +95,7 @@
   text-align: center;
   font-size: 13px;
   font-weight: 700;
-  color: #667eea;
+  color: #008BDB;
   text-transform: uppercase;
   padding: 10px 0;
   letter-spacing: 0.5px;
@@ -124,19 +124,19 @@
 
 .calendar-day:not(.empty):hover {
   background: #e3e8ff;
-  border-color: #667eea;
+  border-color: #008BDB;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
 }
 
 .calendar-day.today {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   color: white;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
 .calendar-day.has-events {
-  border-color: #667eea;
+  border-color: #008BDB;
   background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
 }
 
@@ -168,7 +168,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   box-shadow: 0 0 4px rgba(102, 126, 234, 0.5);
   animation: pulse 2s infinite;
 }
@@ -185,14 +185,14 @@
 .event-more {
   font-size: 11px;
   font-weight: 700;
-  color: #667eea;
+  color: #008BDB;
   margin-top: 2px;
 }
 
 .btn-today {
   width: 100%;
   padding: 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -228,7 +228,7 @@
   font-size: 18px;
   font-weight: 700;
   color: #1a1a1a;
-  border-bottom: 3px solid #667eea;
+  border-bottom: 3px solid #008BDB;
   padding-bottom: 12px;
 }
 
@@ -252,7 +252,7 @@
   padding: 14px;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   border-radius: 12px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #008BDB;
   transition: all 0.3s;
   cursor: pointer;
 }
@@ -265,7 +265,7 @@
 .event-date {
   font-size: 14px;
   font-weight: 700;
-  color: #667eea;
+  color: #008BDB;
   text-transform: uppercase;
   min-width: 50px;
   text-align: center;
@@ -320,7 +320,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 3px solid #667eea;
+  border-bottom: 3px solid #008BDB;
   padding-bottom: 16px;
 }
 
@@ -328,7 +328,7 @@
   margin: 0;
   font-size: 24px;
   font-weight: 700;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -424,7 +424,7 @@
 
 .btn-primary {
   padding: 14px 28px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   color: white;
   border: none;
   border-radius: 12px;
@@ -493,7 +493,7 @@
   overflow: hidden;
   transition: all 0.3s;
   border-left-width: 5px;
-  border-left-color: #667eea;
+  border-left-color: #008BDB;
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
@@ -501,7 +501,7 @@
 .event-card:hover {
   box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
   transform: translateY(-4px);
-  border-color: #667eea;
+  border-color: #008BDB;
 }
 
 .event-card-header {
@@ -692,7 +692,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 28px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   color: white;
   border-radius: 20px 20px 0 0;
 }

@@ -94,6 +94,11 @@ const Reports = () => {
     alert('Exportar a CSV - Funcionalidad en desarrollo');
   };
 
+  const exportToExcel = () => {
+    // Implementar exportación a Excel
+    alert('Exportar a Excel - Funcionalidad en desarrollo');
+  };
+
   const exportToPDF = () => {
     // Implementar exportación a PDF
     alert('Exportar a PDF - Funcionalidad en desarrollo');
@@ -155,10 +160,10 @@ const Reports = () => {
 
             <div className="report-actions">
               <button className="btn-export" onClick={exportToCSV}>
-                📝 Exportar EXCEL
+                � Exportar CSV
               </button>
-              <button className="btn-export" onClick={exportToCSV}>
-                📊 Exportar CSV
+              <button className="btn-export" onClick={exportToExcel}>
+                📝 Exportar Excel
               </button>
               <button className="btn-export" onClick={exportToPDF}>
                 📄 Exportar PDF

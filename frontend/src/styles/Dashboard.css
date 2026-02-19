@@ -29,7 +29,7 @@
 /* Sidebar */
 .sidebar {
   width: 260px;
-  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(180deg, #008BDB 0%, #147BA8 100%);
   color: white;
   display: flex;
   flex-direction: column;
@@ -239,7 +239,7 @@
   margin: 0;
   font-size: 26px;
   font-weight: 700;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -264,7 +264,7 @@
 .menu-toggle-btn span {
   width: 24px;
   height: 2px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   border-radius: 2px;
   transition: all 0.3s ease;
 }
@@ -291,7 +291,7 @@
 
 .header-search input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #008BDB;
   box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
   transform: translateY(-2px);
 }
@@ -306,7 +306,7 @@
 }
 
 .header-search input:focus + .search-icon {
-  color: #667eea;
+  color: #008BDB;
 }
 
 .notification-btn {
@@ -323,7 +323,7 @@
 
 .notification-btn:hover {
   background: rgba(102, 126, 234, 0.1);
-  color: #667eea;
+  color: #008BDB;
   transform: scale(1.1);
 }
 
@@ -372,7 +372,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   color: white;
   display: flex;
   align-items: center;
@@ -458,7 +458,7 @@
 .user-dropdown a:hover,
 .user-dropdown button:hover {
   background: rgba(102, 126, 234, 0.1);
-  color: #667eea;
+  color: #008BDB;
   transform: translateX(4px);
 }
 
@@ -491,14 +491,14 @@
   margin: 0;
   font-size: 30px;
   font-weight: 700;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .role-badge {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   color: white;
   padding: 8px 16px;
   border-radius: 20px;
@@ -551,7 +551,7 @@
 }
 
 .stats-blue { 
-  border-left-color: #667eea;
+  border-left-color: #008BDB;
   background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
 }
 
@@ -726,7 +726,7 @@
 }
 
 .general-table thead {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   color: white;
 }
 
