@@ -9,6 +9,49 @@
   animation: fadeIn 0.6s ease-out;
 }
 
+.calendar-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  background: white;
+  padding: 24px 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 139, 219, 0.15);
+}
+
+.calendar-page-header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.calendar-page-header .btn-new-event {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #008BDB 0%, #0066a8 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 139, 219, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.calendar-page-header .btn-new-event:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 139, 219, 0.4);
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -16,9 +59,10 @@
 
 .calendar-wrapper {
   display: grid;
-  grid-template-columns: 420px 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 28px;
   height: 100%;
+  align-items: start;
 }
 
 /* Sección del Calendario */

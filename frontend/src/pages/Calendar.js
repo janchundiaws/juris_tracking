@@ -218,6 +218,13 @@ const Calendar = () => {
           onMenuToggle={() => setSidebarOpen(!sidebarOpen)}
         />
         <div className="calendar-container">
+          <div className="calendar-page-header">
+            <h1>Calendario</h1>
+            <button className="btn-new-event" onClick={() => setIsCreating(true)}>
+              ➕ Nuevo Evento
+            </button>
+          </div>
+          
           <div className="calendar-wrapper">
             <div className="calendar-section">
               {/* Mini Calendario */}
@@ -239,9 +246,6 @@ const Calendar = () => {
                 </div>
 
                 <button className="btn-today" onClick={handleToday}>Hoy</button>
-                <button className="btn-primary" onClick={() => setIsCreating(true)}>
-                  ➕ Nuevo Evento
-                </button>
               </div>
             </div>
 
