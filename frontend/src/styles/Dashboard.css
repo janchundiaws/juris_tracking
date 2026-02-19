@@ -1131,29 +1131,6 @@
 }
 
 /* Encabezado del formulario en card */
-.form-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24px;
-  background: #f7fafc;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.form-card-header h2 {
-  margin: 0;
-  font-size: 20px;
-  color: #1a1a1a;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #718096;
-  transition: color 0.2s;
-}
 
 .close-btn:hover {
   color: #1a1a1a;

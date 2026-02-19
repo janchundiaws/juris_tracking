@@ -44,6 +44,7 @@
   padding: 28px;
   background: linear-gradient(135deg, #008BDB 0%, #147BA8 100%);
   color: white;
+  border-radius: 16px 16px 0 0;
   position: relative;
   overflow: hidden;
 }
@@ -63,6 +64,19 @@
 @keyframes shine {
   0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
   100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.form-modal-content .form-card-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.form-modal-body {
+  overflow-y: auto;
+  flex: 1;
 }
 
 .form-card-header h2 {
