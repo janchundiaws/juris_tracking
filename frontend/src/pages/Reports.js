@@ -3,6 +3,9 @@ import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import { useAuth } from '../context/AuthContext';
 import { casesService, lawyersService, creditorsService } from '../services/api';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import '../styles/Dashboard.css';
 import '../styles/Reports.css';
 
@@ -90,18 +93,253 @@ const Reports = () => {
   };
 
   const exportToCSV = () => {
-    // Implementar exportación a CSV
-    alert('Exportar a CSV - Funcionalidad en desarrollo');
+    try {
+      // Preparar datos para CSV
+      const csvData = [];
+      
+      // Encabezado
+      csvData.push(['REPORTE DE ESTADÍSTICAS - SISTEMA JUDICIAL']);
+      csvData.push(['Fecha de generación:', new Date().toLocaleDateString('es-ES')]);
+      csvData.push([]);
+      
+      // Resumen General
+      csvData.push(['RESUMEN GENERAL']);
+      csvData.push(['Total de Casos', reportData.totalCases]);
+      csvData.push(['Casos Activos', reportData.activeCases]);
+      csvData.push(['Casos Inactivos', reportData.inactiveCases]);
+      csvData.push(['Casos Suspendidos', reportData.suspendedCases]);
+      csvData.push(['Total Abogados', reportData.totalLawyers]);
+      csvData.push(['Total Acreedores', reportData.totalCreditors]);
+      csvData.push([]);
+      
+      // Casos por Estado
+      csvData.push(['CASOS POR ESTADO']);
+      csvData.push(['Estado', 'Cantidad', 'Porcentaje']);
+      reportData.casesByStatus.forEach(item => {
+        csvData.push([
+          item.status,
+          item.count,
+          `${calculatePercentage(item.count, reportData.totalCases)}%`
+        ]);
+      });
+      csvData.push([]);
+      
+      // Casos por Abogado
+      csvData.push(['CASOS POR ABOGADO']);
+      csvData.push(['#', 'Abogado', 'Casos']);
+      reportData.casesByLawyer.forEach((item, index) => {
+        csvData.push([index + 1, item.name, item.count]);
+      });
+      csvData.push([]);
+      
+      // Casos por Acreedor
+      csvData.push(['CASOS POR ACREEDOR']);
+      csvData.push(['#', 'Acreedor', 'Casos']);
+      reportData.casesByCreditor.forEach((item, index) => {
+        csvData.push([index + 1, item.name, item.count]);
+      });
+      
+      // Convertir a CSV
+      const csvContent = csvData.map(row => row.join(',')).join('\n');
+      
+      // Descargar archivo
+      const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `reporte_${new Date().getTime()}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error al exportar CSV:', error);
+      alert('Error al exportar el archivo CSV');
+    }
   };
 
   const exportToExcel = () => {
-    // Implementar exportación a Excel
-    alert('Exportar a Excel - Funcionalidad en desarrollo');
+    try {
+      // Crear libro de trabajo
+      const wb = XLSX.utils.book_new();
+      
+      // Hoja 1: Resumen General
+      const resumenData = [
+        ['REPORTE DE ESTADÍSTICAS - SISTEMA JUDICIAL'],
+        ['Fecha de generación:', new Date().toLocaleDateString('es-ES')],
+        [],
+        ['RESUMEN GENERAL'],
+        ['Métrica', 'Valor'],
+        ['Total de Casos', reportData.totalCases],
+        ['Casos Activos', reportData.activeCases],
+        ['Casos Inactivos', reportData.inactiveCases],
+        ['Casos Suspendidos', reportData.suspendedCases],
+        ['Total Abogados', reportData.totalLawyers],
+        ['Total Acreedores', reportData.totalCreditors],
+        [],
+        ['CASOS POR ESTADO'],
+        ['Estado', 'Cantidad', 'Porcentaje'],
+        ...reportData.casesByStatus.map(item => [
+          item.status,
+          item.count,
+          `${calculatePercentage(item.count, reportData.totalCases)}%`
+        ])
+      ];
+      
+      const ws1 = XLSX.utils.aoa_to_sheet(resumenData);
+      XLSX.utils.book_append_sheet(wb, ws1, 'Resumen');
+      
+      // Hoja 2: Casos por Abogado
+      const abogadosData = [
+        ['CASOS POR ABOGADO'],
+        [],
+        ['#', 'Abogado', 'Casos']
+      ];
+      
+      reportData.casesByLawyer.forEach((item, index) => {
+        abogadosData.push([index + 1, item.name, item.count]);
+      });
+      
+      const ws2 = XLSX.utils.aoa_to_sheet(abogadosData);
+      XLSX.utils.book_append_sheet(wb, ws2, 'Abogados');
+      
+      // Hoja 3: Casos por Acreedor
+      const acreedoresData = [
+        ['CASOS POR ACREEDOR'],
+        [],
+        ['#', 'Acreedor', 'Casos']
+      ];
+      
+      reportData.casesByCreditor.forEach((item, index) => {
+        acreedoresData.push([index + 1, item.name, item.count]);
+      });
+      
+      const ws3 = XLSX.utils.aoa_to_sheet(acreedoresData);
+      XLSX.utils.book_append_sheet(wb, ws3, 'Acreedores');
+      
+      // Descargar archivo
+      XLSX.writeFile(wb, `reporte_${new Date().getTime()}.xlsx`);
+    } catch (error) {
+      console.error('Error al exportar Excel:', error);
+      alert(`Error al exportar el archivo Excel: ${error.message}`);
+    }
   };
 
   const exportToPDF = () => {
-    // Implementar exportación a PDF
-    alert('Exportar a PDF - Funcionalidad en desarrollo');
+    try {
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.getWidth();
+      let yPos = 20;
+      
+      // Título
+      doc.setFontSize(18);
+      doc.setFont(undefined, 'bold');
+      doc.text('REPORTE DE ESTADÍSTICAS', pageWidth / 2, yPos, { align: 'center' });
+      yPos += 7;
+      
+      doc.setFontSize(12);
+      doc.text('Sistema Judicial', pageWidth / 2, yPos, { align: 'center' });
+      yPos += 10;
+      
+      // Fecha
+      doc.setFontSize(10);
+      doc.setFont(undefined, 'normal');
+      doc.text(`Fecha de generación: ${new Date().toLocaleDateString('es-ES')}`, 14, yPos);
+      yPos += 15;
+      
+      // Resumen General
+      doc.setFontSize(14);
+      doc.setFont(undefined, 'bold');
+      doc.text('Resumen General', 14, yPos);
+      yPos += 8;
+      
+      autoTable(doc, {
+        startY: yPos,
+        head: [['Métrica', 'Valor']],
+        body: [
+          ['Total de Casos', reportData.totalCases.toString()],
+          ['Casos Activos', reportData.activeCases.toString()],
+          ['Casos Inactivos', reportData.inactiveCases.toString()],
+          ['Casos Suspendidos', reportData.suspendedCases.toString()],
+          ['Total Abogados', reportData.totalLawyers.toString()],
+          ['Total Acreedores', reportData.totalCreditors.toString()]
+        ],
+        theme: 'grid',
+        headStyles: { fillColor: [41, 128, 185] },
+        margin: { left: 14, right: 14 }
+      });
+      
+      yPos = doc.lastAutoTable.finalY + 15;
+      
+      // Casos por Estado
+      doc.setFontSize(14);
+      doc.setFont(undefined, 'bold');
+      doc.text('Casos por Estado', 14, yPos);
+      yPos += 8;
+      
+      autoTable(doc, {
+        startY: yPos,
+        head: [['Estado', 'Cantidad', 'Porcentaje']],
+        body: reportData.casesByStatus.map(item => [
+          item.status,
+          item.count.toString(),
+          `${calculatePercentage(item.count, reportData.totalCases)}%`
+        ]),
+        theme: 'grid',
+        headStyles: { fillColor: [41, 128, 185] },
+        margin: { left: 14, right: 14 }
+      });
+      
+      // Nueva página para abogados si es necesario
+      doc.addPage();
+      yPos = 20;
+      
+      // Top Abogados
+      doc.setFontSize(14);
+      doc.setFont(undefined, 'bold');
+      doc.text('Casos por Abogado', 14, yPos);
+      yPos += 8;
+      
+      autoTable(doc, {
+        startY: yPos,
+        head: [['#', 'Abogado', 'Casos']],
+        body: reportData.casesByLawyer.map((item, index) => [
+          (index + 1).toString(),
+          item.name,
+          item.count.toString()
+        ]),
+        theme: 'grid',
+        headStyles: { fillColor: [41, 128, 185] },
+        margin: { left: 14, right: 14 }
+      });
+      
+      yPos = doc.lastAutoTable.finalY + 15;
+      
+      // Top Acreedores
+      doc.setFontSize(14);
+      doc.setFont(undefined, 'bold');
+      doc.text('Casos por Acreedor', 14, yPos);
+      yPos += 8;
+      
+      autoTable(doc, {
+        startY: yPos,
+        head: [['#', 'Acreedor', 'Casos']],
+        body: reportData.casesByCreditor.map((item, index) => [
+          (index + 1).toString(),
+          item.name,
+          item.count.toString()
+        ]),
+        theme: 'grid',
+        headStyles: { fillColor: [41, 128, 185] },
+        margin: { left: 14, right: 14 }
+      });
+      
+      // Guardar PDF
+      doc.save(`reporte_${new Date().getTime()}.pdf`);
+    } catch (error) {
+      console.error('Error al exportar PDF:', error);
+      alert('Error al exportar el archivo PDF');
+    }
   };
 
   const calculatePercentage = (value, total) => {

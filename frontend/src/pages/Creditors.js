@@ -441,7 +441,7 @@ const Creditors = () => {
                 <tbody>
                   {paginatedCreditors.map((creditor) => (
                     <tr key={creditor.id}>
-                      <td className="creditor-name">
+                      <td >
                         {creditor.name}
                       </td>
                       <td>{creditor.ruc}</td>
