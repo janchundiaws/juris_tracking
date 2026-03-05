@@ -11,12 +11,7 @@ const Sidebar = ({ isOpen = false, onClose }) => {
       <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <div className="logo">
-            <svg width="40" height="40" viewBox="0 0 50 50" fill="none">
-              <rect x="10" y="5" width="30" height="40" rx="2" stroke="white" strokeWidth="2"/>
-              <path d="M20 15 L30 15" stroke="white" strokeWidth="2"/>
-              <path d="M20 22 L30 22" stroke="white" strokeWidth="2"/>
-              <path d="M20 29 L30 29" stroke="white" strokeWidth="2"/>
-            </svg>
+            <img src="/logo192.png" alt="JurisTracking Logo" />
           </div>
           <h2>JurisTracking</h2>
         </div>

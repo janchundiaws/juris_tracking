@@ -121,12 +121,7 @@ const Register = () => {
       <div className="auth-card register-card">
         <div className="auth-header">
           <div className="logo">
-            <svg width="50" height="50" viewBox="0 0 50 50" fill="none">
-              <rect x="10" y="5" width="30" height="40" rx="2" stroke="#2563eb" strokeWidth="2"/>
-              <path d="M20 15 L30 15" stroke="#2563eb" strokeWidth="2"/>
-              <path d="M20 22 L30 22" stroke="#2563eb" strokeWidth="2"/>
-              <path d="M20 29 L30 29" stroke="#2563eb" strokeWidth="2"/>
-            </svg>
+            <img src="/logo192.png" alt="JurisTracking Logo" />
           </div>
           <h1>JurisTracking</h1>
           <p className="subtitle">Crear Nueva Cuenta</p>

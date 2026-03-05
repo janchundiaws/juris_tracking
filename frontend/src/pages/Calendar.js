@@ -302,7 +302,7 @@ const Calendar = () => {
                   )}
 
                   <div className="form-group">
-                    <label htmlFor="description">📝 Descripción del Evento *</label>
+                    <label htmlFor="description">Descripción del Evento *</label>
                     <textarea
                       id="description"
                       name="description"
@@ -315,7 +315,7 @@ const Calendar = () => {
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="event_date">📅 Fecha y Hora *</label>
+                    <label htmlFor="event_date">Fecha y Hora *</label>
                     <input
                       type="datetime-local"
                       id="event_date"
@@ -327,7 +327,7 @@ const Calendar = () => {
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="location">📍 Lugar del Evento</label>
+                    <label htmlFor="location">Lugar del Evento</label>
                     <input
                       type="text"
                       id="location"
