@@ -190,13 +190,6 @@
   box-shadow: 0 0 0 3px rgba(74, 74, 74, 0.1);
 }
 
-.form-actions {
-  display: flex;
-  gap: 12px;
-  padding-top: 16px;
-  border-top: 1px solid #e2e8f0;
-}
-
 .btn-primary {
   padding: 12px 24px;
   background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
@@ -401,6 +394,10 @@
 
   .form-actions {
     flex-direction: column;
+    display: flex;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid #e2e8f0;
   }
 
   .form-actions button {

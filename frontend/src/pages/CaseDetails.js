@@ -533,13 +533,6 @@ const CaseDetails = () => {
                 {/* Hero Section - Información Principal */}
                 <div className="hero-info">
                   <div className="hero-main">
-                    <div className="hero-badge">
-                      <span className="badge-icon">⚖️</span>
-                      <div className="badge-content">
-                        <span className="badge-label">Número de Caso</span>
-                        <span className="badge-number">{caseData.case_number}</span>
-                      </div>
-                    </div>
                     <div className="hero-details">
                       <div className="hero-item">
                         <span className="hero-icon">👤</span>
@@ -562,6 +555,13 @@ const CaseDetails = () => {
                           <div className="hero-value">{formatDate(caseData.demand_date)}</div>
                         </div>
                       </div>
+                      <div className="hero-item">
+                        <span className="hero-icon">🔢</span>
+                        <div>
+                          <div className="hero-label">Operación</div>
+                          <div className="hero-value">{caseData.operation || 'N/A'}</div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -569,21 +569,39 @@ const CaseDetails = () => {
                 {/* Grid de 2 columnas */}
                 <div className="info-layout">
                   <div className="info-column">
-                    {/* Información del Proceso */}
+                    {/* Información del Caso */}
                     <div className="info-block">
                       <div className="block-title">
                         <span className="title-icon">⚖️</span>
-                        <h3>Información del Proceso</h3>
+                        <h3>Información del Caso</h3>
                       </div>
                       <div className="block-content">
                         <div className="info-field">
                           <label>Tipo de Proceso</label>
                           <p>{getMaestroValue(caseData.process_type)}</p>
                         </div>
-                        <div className="info-field">
-                          <label>Operación</label>
-                          <p>{caseData.operation || 'N/A'}</p>
+                    <div className="info-block">
+                      <div className="block-title">
+                        <span className="title-icon">📝</span>
+                        <h3>Resumen de lo Actuado</h3>
+                      </div>
+                      <div className="block-content">
+                        <div className="text-box">
+                          {caseData.procedural_summary || 'No hay resumen disponible'}
                         </div>
+                      </div>
+                    </div>
+                    <div className="info-block">
+                      <div className="block-title">
+                        <span className="title-icon">📈</span>
+                        <h3>Avance Procesal</h3>
+                      </div>
+                      <div className="block-content">
+                        <div className="text-box">
+                          {caseData.procedural_progress || 'No hay avance registrado'}
+                        </div>
+                      </div>
+                    </div>
                         <div className="info-field">
                           <label>Producto</label>
                           <p>{getMaestroValue(caseData.product)}</p>

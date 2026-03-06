@@ -46,6 +46,7 @@ const Cases = () => {
   const [errors, setErrors] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const [currentStep, setCurrentStep] = useState(1);
 
   useEffect(() => {
     fetchData();
@@ -153,8 +154,16 @@ const Cases = () => {
       newErrors.internal_lawyer_id = 'El abogado interno es requerido';
     }
 
+    if (!formData.external_lawyer_id) {
+      newErrors.internal_lawyer_id = 'El abogado externo es requerido';
+    }
+
     if (!formData.creditor_id) {
       newErrors.creditor_id = 'El acreedor es requerido';
+    }
+
+    if (!formData.provincie_id) {
+      newErrors.provincie_id = 'La provincia es requerida';
     }
 
     if (!formData.product) {
@@ -277,12 +286,127 @@ const Cases = () => {
     setIsCreating(false);
     setEditingId(null);
     setErrors({});
+    setCurrentStep(1);
   };
 
   const handleEdit = (caseItem) => {
     setFormData(caseItem);
     setEditingId(caseItem.id);
     setIsCreating(true);
+    setCurrentStep(1);
+  };
+
+  const validateStep = (step) => {
+    const newErrors = {};
+    
+    if (step === 1) {
+      // Información Personal
+      if (!formData.full_name.trim()) {
+        newErrors.full_name = 'El nombre completo es requerido';
+      }
+      if (!formData.identification.trim()) {
+        newErrors.identification = 'La identificación es requerida';
+      }
+    } else if (step === 2) {
+      // Información del Caso
+      if (!formData.case_number.trim()) {
+        newErrors.case_number = 'El número de caso es requerido';
+      }
+      if (!formData.process_type) {
+        newErrors.process_type = 'El tipo de proceso es requerido';
+      }
+    } else if (step === 3) {
+      // Asignaciones
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (!formData.internal_lawyer_id) {
+        newErrors.internal_lawyer_id = 'El abogado interno es requerido';
+      }
+      if (!formData.area_assignment_date) {
+        newErrors.area_assignment_date = 'La fecha de asignación de área es requerida';
+      } else {
+        const areaDate = new Date(formData.area_assignment_date);
+        if (areaDate > today) {
+          newErrors.area_assignment_date = 'La fecha de asignación de área no puede ser futura';
+        }
+      }
+      if (!formData.external_lawyer_id) {
+        newErrors.external_lawyer_id = 'El abogado externo es requerido';
+      }
+
+      if (!formData.internal_assignment_date) {
+        newErrors.internal_assignment_date = 'La fecha de asignación interna es requerida';
+      } else {
+        const internalDate = new Date(formData.internal_assignment_date);
+        if (internalDate > today) {
+          newErrors.internal_assignment_date = 'La fecha de asignación interna no puede ser futura';
+        }
+        if (formData.area_assignment_date) {
+          const areaDate = new Date(formData.area_assignment_date);
+          if (internalDate < areaDate) {
+            newErrors.internal_assignment_date = 'La fecha de asignación interna no puede ser anterior a la fecha de asignación de área';
+          }
+        }
+      }
+      if (formData.external_assignment_date) {
+        const externalDate = new Date(formData.external_assignment_date);
+        if (externalDate > today) {
+          newErrors.external_assignment_date = 'La fecha de asignación externa no puede ser futura';
+        }
+        if (formData.internal_assignment_date) {
+          const internalDate = new Date(formData.internal_assignment_date);
+          if (externalDate < internalDate) {
+            newErrors.external_assignment_date = 'La fecha de asignación externa no puede ser anterior a la fecha de asignación interna';
+          }
+        }
+      }
+      if (formData.external_lawyer_id && !formData.external_assignment_date) {
+        newErrors.external_assignment_date = 'La fecha de asignación externa es requerida';
+      }
+    } else if (step === 4) {
+      // Detalles Adicionales
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      console.log("ingresamos a validar el paso 4");
+      if (!formData.creditor_id) {
+        newErrors.creditor_id = 'El acreedor es requerido';
+      }
+      if (!formData.provincie_id) {
+        newErrors.provincie_id = 'La provincia es requerida';
+      }
+      if (!formData.product) {
+        newErrors.product = 'El producto es requerido';
+      }
+      if (!formData.guarantee) {
+        newErrors.guarantee = 'La garantía es requerida';
+      }
+      if (!formData.demand_date) {
+        newErrors.demand_date = 'La fecha de demanda es requerida';
+      } else {
+        const demandDate = new Date(formData.demand_date);
+        if (demandDate > today) {
+          newErrors.demand_date = 'La fecha de demanda no puede ser futura';
+        }
+      }
+    }
+    
+    return newErrors;
+  };
+
+  const handleNextStep = () => {
+    const newErrors = validateStep(currentStep);
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    setErrors({});
+    setCurrentStep(prev => Math.min(prev + 1, 4));
+  };
+
+  const handlePrevStep = () => {
+    setCurrentStep(prev => Math.max(prev - 1, 1));
+    setErrors({});
   };
 
   // Funciones para filtrar datos de los abogados
@@ -412,57 +536,59 @@ const Cases = () => {
               )}
 
               <form onSubmit={handleSubmit} className="cases-form">
-                {/* Información Personal */}
-                <div >
-                  <h3 style={{ marginTop: 0, marginBottom: '16px', fontSize: '16px', color: '#1a1a1a' }}>Información Personal</h3>
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label htmlFor="full_name">Nombre Completo *</label>
-                      <input
-                        type="text"
-                        id="full_name"
-                        name="full_name"
-                        value={formData.full_name}
-                        onChange={handleChange}
-                        placeholder="Juan Pérez García"
-                        disabled={loading}
-                      />
-                      {errors.full_name && <span className="error-text">{errors.full_name}</span>}
+                {/* Paso 1: Información Personal */}
+                {currentStep === 1 && (
+                  <div>
+                    <h3 style={{ marginTop: 0, marginBottom: '16px', fontSize: '16px', color: '#1a1a1a' }}>Información Personal</h3>
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label htmlFor="full_name">Nombre Completo *</label>
+                        <input
+                          type="text"
+                          id="full_name"
+                          name="full_name"
+                          value={formData.full_name}
+                          onChange={handleChange}
+                          placeholder="Juan Pérez García"
+                          disabled={loading}
+                        />
+                        {errors.full_name && <span className="error-text">{errors.full_name}</span>}
+                      </div>
                     </div>
 
-                    <div className="form-group">
-                      <label htmlFor="identification">Identificación *</label>
-                      <input
-                        type="text"
-                        id="identification"
-                        name="identification"
-                        value={formData.identification}
-                        onChange={handleChange}
-                        placeholder="Cédula o Pasaporte"
-                        disabled={loading}
-                      />
-                      {errors.identification && <span className="error-text">{errors.identification}</span>}
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label htmlFor="identification">Identificación *</label>
+                        <input
+                          type="text"
+                          id="identification"
+                          name="identification"
+                          value={formData.identification}
+                          onChange={handleChange}
+                          placeholder="Cédula o Pasaporte"
+                          disabled={loading}
+                        />
+                        {errors.identification && <span className="error-text">{errors.identification}</span>}
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="operation">Operación</label>
+                        <input
+                          type="text"
+                          id="operation"
+                          name="operation"
+                          value={formData.operation}
+                          onChange={handleChange}
+                          placeholder="Número de operación"
+                          disabled={loading}
+                        />
+                      </div>
                     </div>
                   </div>
+                )}
 
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label htmlFor="operation">Operación</label>
-                      <input
-                        type="text"
-                        id="operation"
-                        name="operation"
-                        value={formData.operation}
-                        onChange={handleChange}
-                        placeholder="Número de operación"
-                        disabled={loading}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Información del Caso */}
-                <div >
+                {/* Paso 2: Información del Caso */}
+                {currentStep === 2 && (
+                  <div>
                   <h3 style={{ marginTop: 0, marginBottom: '16px', fontSize: '16px', color: '#1a1a1a' }}>Información del Caso</h3>
                   <div className="form-row">
                     <div className="form-group">
@@ -480,7 +606,7 @@ const Cases = () => {
                     </div>
 
                     <div className="form-group">
-                      <label htmlFor="process_type">Tipo de Proceso</label>
+                      <label htmlFor="process_type">Tipo de Proceso *</label>
                       <select
                         id="process_type"
                         name="process_type"
@@ -495,6 +621,7 @@ const Cases = () => {
                           </option>
                         ))}
                       </select>
+                      {errors.process_type && <span className="error-text">{errors.process_type}</span>}
                     </div>
                   </div>
 
@@ -511,9 +638,6 @@ const Cases = () => {
                         disabled={loading}
                       />
                     </div>
-                  </div>
-
-                  <div className="form-row">
                     <div className="form-group">
                       <label htmlFor="procedural_progress">Avance Procesal</label>
                       <textarea
@@ -528,9 +652,11 @@ const Cases = () => {
                     </div>
                   </div>
                 </div>
+                )}
 
-                {/* Asignaciones */}
-                <div >
+                {/* Paso 3: Asignaciones */}
+                {currentStep === 3 && (
+                  <div>
                   <h3 style={{ marginTop: 0, marginBottom: '16px', fontSize: '16px', color: '#1a1a1a' }}>Asignaciones</h3>
                   <div className="form-row">
                     <div className="form-group">
@@ -553,6 +679,22 @@ const Cases = () => {
                     </div>
 
                     <div className="form-group">
+                      <label htmlFor="internal_assignment_date">Fecha de Asignación Interna *</label>
+                      <input
+                        type="date"
+                        id="internal_assignment_date"
+                        name="internal_assignment_date"
+                        value={formData.internal_assignment_date}
+                        onChange={handleChange}
+                        disabled={loading}
+                      />
+                      {errors.internal_assignment_date && <span className="error-text">{errors.internal_assignment_date}</span>}
+                    </div>
+                  </div>
+
+                  <div className="form-row">
+
+                    <div className="form-group">
                       <label htmlFor="external_lawyer_id">Abogado Externo *</label>
                       <select
                         id="external_lawyer_id"
@@ -570,6 +712,19 @@ const Cases = () => {
                       </select>
                       {errors.external_lawyer_id && <span className="error-text">{errors.external_lawyer_id}</span>}
                     </div>
+
+                    <div className="form-group">
+                      <label htmlFor="external_assignment_date">Fecha de Asignación Externa{formData.external_lawyer_id && ' *'}</label>
+                      <input
+                        type="date"
+                        id="external_assignment_date"
+                        name="external_assignment_date"
+                        value={formData.external_assignment_date}
+                        onChange={handleChange}
+                        disabled={loading}
+                      />
+                      {errors.external_assignment_date && <span className="error-text">{errors.external_assignment_date}</span>}
+                    </div>
                   </div>
 
                   <div className="form-row">
@@ -585,38 +740,14 @@ const Cases = () => {
                       />
                       {errors.area_assignment_date && <span className="error-text">{errors.area_assignment_date}</span>}
                     </div>
-
-                    <div className="form-group">
-                      <label htmlFor="internal_assignment_date">Fecha de Asignación Interna *</label>
-                      <input
-                        type="date"
-                        id="internal_assignment_date"
-                        name="internal_assignment_date"
-                        value={formData.internal_assignment_date}
-                        onChange={handleChange}
-                        disabled={loading}
-                      />
-                      {errors.internal_assignment_date && <span className="error-text">{errors.internal_assignment_date}</span>}
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="external_assignment_date">Fecha de Asignación Externa{formData.external_lawyer_id && ' *'}</label>
-                      <input
-                        type="date"
-                        id="external_assignment_date"
-                        name="external_assignment_date"
-                        value={formData.external_assignment_date}
-                        onChange={handleChange}
-                        disabled={loading}
-                      />
-                      {errors.external_assignment_date && <span className="error-text">{errors.external_assignment_date}</span>}
-                    </div>
                   </div>
                 </div>
+                )}
 
-                {/* Detalles Adicionales */}
-                <div >
-                  <h3 style={{ marginTop: 0, marginBottom: '16px', fontSize: '16px', color: '#1a1a1a' }}>Detalles Adicionales</h3>
+                {/* Paso 4: Detalles Adicionales */}
+                {currentStep === 4 && (
+                  <div>
+                    <h3 style={{ marginTop: 0, marginBottom: '16px', fontSize: '16px', color: '#1a1a1a' }}>Detalles Adicionales</h3>
                   <div className="form-row">
                     <div className="form-group">
                       <label htmlFor="creditor_id">Acreedor *</label>
@@ -721,20 +852,56 @@ const Cases = () => {
                         disabled={loading}
                       >
                         <option value="activo">Activo</option>
-                        <option value="inactivo">Inactivo</option>
-                        <option value="suspendido">Suspendido</option>
+                        <option value="inactive">Inactivo</option>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="closed">Cerrado</option>
                       </select>
                     </div>
                   </div>
-                </div>
+                  </div>
+                )}
 
-                <div className="form-actions">
-                  <button type="submit" className="btn-primary" disabled={loading}>
-                    {loading ? 'Guardando...' : editingId ? 'Actualizar Caso' : 'Crear Caso'}
-                  </button>
-                  <button type="button" className="btn-secondary" onClick={resetForm} disabled={loading}>
-                    Cancelar
-                  </button>
+                <div className="form-actions" style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between',
+                  marginTop: '20px',
+                  paddingTop: '20px',
+                  borderTop: '1px solid #e0e0e0'
+                }}>
+                  <div>
+                    <button type="button" 
+                            className="btn-secondary" 
+                            onClick={resetForm} disabled={loading}>
+                      Cancelar
+                    </button>
+                  </div>
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    {currentStep > 1 && (
+                      <button 
+                        type="button" 
+                        className="btn-secondary" 
+                        onClick={handlePrevStep}
+                        disabled={loading}
+                      >
+                        ←
+                      </button>
+                    )}
+
+                    {currentStep < 4 ? (
+                      <button 
+                        type="button" 
+                        className="btn-primary" 
+                        onClick={handleNextStep}
+                        disabled={loading}
+                      >
+                         →
+                      </button>
+                    ) : (
+                      <button type="submit" className="btn-primary" disabled={loading}>
+                        {loading ? 'Guardando...' : editingId ? 'Actualizar ' :'Crear'}
+                      </button>
+                    )}
+                  </div>
                 </div>
               </form>
               </div>
